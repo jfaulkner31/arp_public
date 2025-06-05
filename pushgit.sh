@@ -11,5 +11,3 @@ git add .
 git commit -m 'latest'
 git push origin gh-pages
 
-cd ../docs
-explorer.exe .
