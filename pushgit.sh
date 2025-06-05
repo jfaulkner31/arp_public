@@ -12,5 +12,3 @@ git commit -m 'latest'
 git push origin main
 git push origin gh-pages
 
-cd ../docs
-explorer.exe .
