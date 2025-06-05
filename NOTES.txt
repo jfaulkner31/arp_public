@@ -1,0 +1,30 @@
+Notes on HTML formatting:
+
+(1) To link to a certain page put the following at the start of the file:
+.. _proj1:
+
+(2) To referenece that link use the following in text:
+:ref:`Title of project 1 <proj1>`: more details here is needed.
+
+(3) Bold:
+
+
+(4) Note-box:
+  .. Note::
+
+(5) See project1.rst for examples.
+
+===============================
+WHAT IS REQUIRED IN THIS COURSE
+===============================
+How to execute
+milestones
+input cards and input descriptions (e.g. what the functions and data sturctures must be in python)
+project descriptiosn
+For each project I am expecting to see:
+
+	1. Brief project description
+	2. Methodology section
+	3. Results and discussion
+	4. Performence summary (execution times, accuracy, and so on).
+	5. Brief summary

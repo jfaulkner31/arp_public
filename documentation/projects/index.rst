@@ -1,0 +1,25 @@
+.. _projects:
+
+
+Projects descriptions
+=====================
+
+Briefly describe all the projects here.
+
+
+
+1. :ref:`Title of project 1 <proj1>`: more details here is needed.
+2. Placeholder for project 2.
+
+
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Contents:
+
+   project1.rst
+
+
+
+
