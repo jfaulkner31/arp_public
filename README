@@ -8,7 +8,7 @@ https://jfaulkner31.github.io/arp_public/html/index.html
 
 =============================================================================
 
-To combile very cool website:
+To compile very cool website:
 
 ===================
 Option 1:
@@ -27,3 +27,21 @@ Option 2:
 ===================
 From ARP_PUBLIC:
 bash compile_documentation.sh
+
+=============================================================================
+
+To push to github - make sure that we are pushing to gh-pages:
+
+===================
+Option 1:
+===================
+1. git add .
+2. git commit -m 'message here'
+3. git push
+OR
+3. git push origin gh-pages
+
+===================
+Option 2:
+===================
+bash pushgit.sh
