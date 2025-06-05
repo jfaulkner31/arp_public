@@ -8,8 +8,8 @@ Briefly describe all the projects here.
 
 
 
-1. :ref:`Title of project 1 <proj1>`: more details here is needed.
-2. Placeholder for project 2.
+1. :ref:`Neutron Transport with Monte Carlo <proj1>`.
+2. Placeholder for Project 2 (Coming soon!).
 
 
 

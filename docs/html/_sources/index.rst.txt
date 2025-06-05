@@ -8,13 +8,13 @@ NRE7203 class documentation!
 
 .. only:: html
 
-General description if you want
+Documentation for NRE7203 - Advanced Reactor Physics
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
-   
+
    overview
    contributors
    projects/index

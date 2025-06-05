@@ -23,16 +23,22 @@ Glossary
         Widely-used python package that allows multidimensional arrays
         and linear algebra routines. More information at
         `<https://www.numpy.org>`_
-    
+
     pip
         Recommended tool for installing Python packages. More at
         `<https://pypi.org/project/pip/>`_
 
     pytest
-        Fully featured python test runner. More at 
+        Fully featured python test runner. More at
         `<https://pytest.org/en/latest/>`_
 
     yaml
         Human-readable format used for configuration files in this
         project. For more information, see
         `<https://pyyaml.org/wiki/PyYAMLDocumentation>`_
+    scipy
+        Python scipy module! More at
+        `<https://scipy.org/>`_
+    serpentTools
+        Lovely tools useful for handling Serpent 2 data in Python! More at
+        `<https://serpent-tools.readthedocs.io/en/master/>`_
