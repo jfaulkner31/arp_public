@@ -2,3 +2,13 @@
 */*Zone.Identifier
 */*/*Zone.Identifier
 */*/*/*Zone.Identifier
+*.py
+*.ipynb
+*/__pycache__
+*/__pycache__/*
+*/*/__pycache__
+*/*/*/__pycache__
+*/*/*/*/__pycache__
+__pycache__/*
+NRE7203_Workshop_02_03_MC_vStudents
+documentation/python_files

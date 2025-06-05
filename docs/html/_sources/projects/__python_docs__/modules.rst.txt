@@ -1,0 +1,7 @@
+__python_files__
+================
+
+.. toctree::
+   :maxdepth: 4
+
+   pointsource_sphere

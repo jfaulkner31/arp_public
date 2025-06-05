@@ -1,3 +1,8 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('projects/__python_files__'))
+
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full

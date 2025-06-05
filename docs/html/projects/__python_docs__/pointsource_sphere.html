@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pointsource_sphere module &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../../glossary.html" />
+    <link rel="prev" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="../project1_notebook.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-pointsource_sphere">
+<span id="pointsource-sphere-module"></span><h1>pointsource_sphere module<a class="headerlink" href="#module-pointsource_sphere" title="Link to this heading">¶</a></h1>
+<p>Module:</p>
+<p>pointsource_sphere</p>
+<dl class="simple">
+<dt>Description of this file:</dt><dd><ul class="simple">
+<li><p>Solution of the point source within a sphere</p></li>
+<li><p>The heterogenous sphere is divided into multiple shells</p></li>
+<li><p>Only the absorption reaction is considered here for simplicity</p></li>
+<li><p>It is assumed that the source does not absrob the neutrons</p></li>
+<li><p>Although the source radius is defined, it is over-written with zero</p></li>
+</ul>
+</dd>
+</dl>
+<p>Created on Sat May 17 18:20:00 2025 &#64;author: Dan Kotlyar
+Last updated on Mon May 19 11:30:00 2025 &#64;author: Dan Kotlyar</p>
+<p>email: <a class="reference external" href="mailto:dan&#46;kotlyar&#37;&#52;&#48;me&#46;gatech&#46;edu">dan<span>&#46;</span>kotlyar<span>&#64;</span>me<span>&#46;</span>gatech<span>&#46;</span>edu</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pointsource_sphere.PlotSigT">
+<span class="sig-prename descclassname"><span class="pre">pointsource_sphere.</span></span><span class="sig-name descname"><span class="pre">PlotSigT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pointsource_sphere.PointSourceInSphere" title="pointsource_sphere.PointSourceInSphere"><span class="pre">PointSourceInSphere</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">yLower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yUpper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PlotSigT" title="Link to this definition">¶</a></dt>
+<dd><p>Def for plotting sigma_total.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mc</strong> – A PointSourceInSphere() object</p></li>
+<li><p><strong>yLower</strong> (<em>int</em>) – Lower bound for y axis on plot</p></li>
+<li><p><strong>yUpper</strong> (<em>array</em>) – Upper bound for y axis on plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointsource_sphere.</span></span><span class="sig-name descname"><span class="pre">PointSourceInSphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nMC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>MC solution for a point source positioned in an heterogenous sphere</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nMC</strong> (<em>int</em>) – number of repetitive monte carlo simulations</p></li>
+<li><p><strong>S0</strong> (<em>int</em>) – number of source neutrons</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – radius of the sphere in cm</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section array for all the different regions</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.inps">
+<span class="sig-name descname"><span class="pre">inps</span></span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.inps" title="Link to this definition">¶</a></dt>
+<dd><p>container with inputs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.resAN">
+<span class="sig-name descname"><span class="pre">resAN</span></span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.resAN" title="Link to this definition">¶</a></dt>
+<dd><p>container with analytic results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.resST">
+<span class="sig-name descname"><span class="pre">resST</span></span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.resST" title="Link to this definition">¶</a></dt>
+<dd><p>container with surface tracking results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.resDT">
+<span class="sig-name descname"><span class="pre">resDT</span></span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.resDT" title="Link to this definition">¶</a></dt>
+<dd><p>container with delta tracking results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.times">
+<span class="sig-name descname"><span class="pre">times</span></span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.times" title="Link to this definition">¶</a></dt>
+<dd><p>container with execution times</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – if nMC is not int</p></li>
+<li><p><strong>ValueError</strong> – if nMC is not positive</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.PlotDifferences">
+<span class="sig-name descname"><span class="pre">PlotDifferences</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.PlotDifferences" title="Link to this definition">¶</a></dt>
+<dd><p>Plots differences in fluxes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.PlotFluxes">
+<span class="sig-name descname"><span class="pre">PlotFluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheme</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.PlotFluxes" title="Link to this definition">¶</a></dt>
+<dd><p>Plots neutron fluxes for a given method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scheme</strong> (<em>str</em>) – scheme to plot fluxes for (‘dt’, ‘wdt’, ‘all’, ‘st’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.PrintFOM">
+<span class="sig-name descname"><span class="pre">PrintFOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheme</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.PrintFOM" title="Link to this definition">¶</a></dt>
+<dd><p>Prints FOM for the desired scheme</p>
+<dl class="simple">
+<dt>Uses the average of the variance squared and time for the FOM:</dt><dd><p>FOM = 1/(sig^2 * time)
+where sig^2 = mean(sig^2(xyz)])</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scheme</strong> (<em>str</em>) – scheme to plot fluxes for (‘dt’, ‘wdt’, ‘all’, ‘st’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere.Solve">
+<span class="sig-name descname"><span class="pre">Solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheme</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere.Solve" title="Link to this definition">¶</a></dt>
+<dd><p>MC solution using a specific random walk scheme</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scheme</strong> (<em>str</em>) – neutron tracking scheme [‘st’, ‘dt’, ‘analytic’, ‘wdt’]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere._Analytic">
+<span class="sig-name descname"><span class="pre">_Analytic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere._Analytic" title="Link to this definition">¶</a></dt>
+<dd><p>Analytic solution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere._SolveDT">
+<span class="sig-name descname"><span class="pre">_SolveDT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere._SolveDT" title="Link to this definition">¶</a></dt>
+<dd><p>MC solution using delta tracking</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere._SolveST">
+<span class="sig-name descname"><span class="pre">_SolveST</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere._SolveST" title="Link to this definition">¶</a></dt>
+<dd><p>MC solution using ray tracking</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.PointSourceInSphere._SolveWDT">
+<span class="sig-name descname"><span class="pre">_SolveWDT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.PointSourceInSphere._SolveWDT" title="Link to this definition">¶</a></dt>
+<dd><p>MC solution using weighted delta tracking routine.</p>
+<p>Uses a Russian Roulette threshold of 0.25 to discard particles.</p>
+<p>Call via PointSourceInSphere() object.</p>
+<p>Based on:</p>
+<p>L.W.G. Morgan, D. Kotlyar, 2015. “Weighted-delta-tracking for Monte Carlo particle transport,”
+Annals of Nuclear Energy, 85, 1184-1188.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pointsource_sphere.WeightedNeutron">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointsource_sphere.</span></span><span class="sig-name descname"><span class="pre">WeightedNeutron</span></span><a class="headerlink" href="#pointsource_sphere.WeightedNeutron" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for neutrons. Kinda simple right now but we
+would ideally use this more and more and expand on it as
+more methods are built/added.</p>
+<p>Only currently used in the weighted delta tracking routine.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pointsource_sphere.WeightedNeutron.inps">
+<span class="sig-name descname"><span class="pre">inps</span></span><a class="headerlink" href="#pointsource_sphere.WeightedNeutron.inps" title="Link to this definition">¶</a></dt>
+<dd><p>weight of the neutron</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>weight</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointsource_sphere.WeightedNeutron.setWeight">
+<span class="sig-name descname"><span class="pre">setWeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointsource_sphere.WeightedNeutron.setWeight" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the weight of the neutron.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>weight</strong> (<em>float</em>) – new weight of the neutron</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="../project1_notebook.html" title="previous chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+      <li>Next: <a href="../../glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;Date, Your name.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__python_docs__/pointsource_sphere.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

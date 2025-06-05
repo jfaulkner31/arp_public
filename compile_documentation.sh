@@ -14,4 +14,3 @@ cd documentation
 make html
 
 cd ../docs
-explorer.exe .
