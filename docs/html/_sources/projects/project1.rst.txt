@@ -1,7 +1,7 @@
 .. _proj1:
 
 
-Project 1: Title
+Project 1: Neutron Transport With Monte Carlo
 -----------------
 
 You can provide description here.
