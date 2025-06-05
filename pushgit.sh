@@ -9,5 +9,5 @@ echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo
 git add .
 git commit -m 'latest'
-git push origin gh-pages
+git push origin main
 
