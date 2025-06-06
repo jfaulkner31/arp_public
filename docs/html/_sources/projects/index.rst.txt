@@ -26,6 +26,6 @@ Projects
    project1_notebook.rst
    __python_docs__/pointsource_sphere
 
-.. image:: ../fancy_images/buzz_scary.jpg
+.. image:: ../fancy_images/buzz_scary.png
 	:align: center
-	:width: 250
+	:width: 215
