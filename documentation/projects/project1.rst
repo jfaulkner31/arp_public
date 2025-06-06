@@ -50,7 +50,9 @@ After a particles initial position (:math:`\pmb{r_0}`) and direction (:math:`\pm
 			\pmb{r} = \pmb{r_0} + d \pmb{\Omega}
 
 where,
-		:math:`\xi` is a random number between 0 and 1.
+		:math:`\xi` is a random number between 0 and 1,
+
+		:math:`\Sigma_{maj}` is the majorant cross section (taken as the largest cross section in the problem).
 
 If the neutron does not leak (:math:`\pmb{r}` still lies within the problem boundaries), Delta Tracking normally then performs a rejection/acceptance technique by rolling a random number to determine whether to accept this collision.
 Instead of rejecting potential collisions, WTD instead accepts every collision and adjusts the particle weight according to the ratio between the total
