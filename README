@@ -25,5 +25,5 @@ make html
 ===================
 Option 2:
 ===================
-From ARP_PUBLIC:
+From arp_public:
 bash compile_documentation.sh
