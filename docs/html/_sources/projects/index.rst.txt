@@ -4,9 +4,6 @@
 	:align: center
 	:width: 100
 
-
-
-
 Projects
 =====================
 
@@ -29,3 +26,6 @@ Projects
    project1_notebook.rst
    __python_docs__/pointsource_sphere
 
+.. image:: ../fancy_images/buzz_scary.jpg
+	:align: center
+	:width: 250
