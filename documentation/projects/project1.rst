@@ -52,7 +52,7 @@ After a particles initial position (:math:`\pmb{r_0}`) and direction (:math:`\pm
 where,
 		:math:`\xi` is a random number between 0 and 1.
 
-If the neutron does not leak (:math:`\pmb{r}` lies outside the problem boundaries), Delta Tracking normally then performs a rejection/acceptance technique by rolling a random number to determine whether to accept this collision.
+If the neutron does not leak (:math:`\pmb{r}` still lies within the problem boundaries), Delta Tracking normally then performs a rejection/acceptance technique by rolling a random number to determine whether to accept this collision.
 Instead of rejecting potential collisions, WTD instead accepts every collision and adjusts the particle weight according to the ratio between the total
 and majorant cross section. The total cross section is taken at :math:`\pmb{r}` while the majorant cross section is the maximum cross section in the problem.
 
@@ -80,7 +80,7 @@ Russian Roulette
 ^^^^^^^^^^^^^^^^^^^^^^^
 To avoid particles with extremely low weights (and thus avoid tracking particles with little contribution to the overall problem), Russian Roulette can be "played"
 after a particles weight is updated coming out of a collision. First a threshold weight, :math:`w_{th} \approx 0.25` is chosen to define a cutoff
-at which the Russian Roulette subroutine is run. Then, a random number, :math:`\eta` is rolled. If :math:`\eta` is found to be less than the current
+at which the Russian Roulette subroutine is run. Then, a random number, :math:`\eta`, is rolled. If :math:`\eta` is found to be less than the current
 particles weight, the particle survives and is set to its starting weight (usually 1.0). Otherwise, the particle is killed completely. The whole routine
 can be performed in the following code snippet:
 
@@ -179,10 +179,10 @@ the results are within statistics of the true analytical solution.
 Additionally, for the case representing a reasonable Monte Carlo problem (Case 1), WDT appears to be the "best" method as the FoM is found to be the highest meaning
 it is the most efficient method from a computational standpoint.
 
-However, both the performance of both Delta Tracking methods degrades significantly in Case 2 - the Surface Tracking method is found to be much more
+However, the performance of both Delta Tracking methods degrade significantly in Case 2 - the Surface Tracking method is found to be much more
 computationally efficient. This is primarily due to the majorant cross section being very large for the problem of interest.
 
-Finally, Case 3 resembles a problem where Surface Tracking is known to perform very poorly in due to the large number of surfaces that a particle must cross
+Finally, Case 3 resembles a problem where Surface Tracking is known to perform very poorly due to the large number of surfaces that a particle must cross
 before an interaction. The FoM for both the Delta Tracking methods is found to be higher than the FoM for the Surface Tracking methods in Case 3.
 
 
@@ -203,7 +203,7 @@ in the case of a very large cross section at which it was found to be comparable
 
 Jupyter Notebook
 ---------------------------------------------
-A Jupyter Notebook is provided :ref:`HERE <proj1_jupyter_notebook>`.
+A Jupyter Notebook showing the work done is provided :ref:`HERE <proj1_jupyter_notebook>`.
 
 
 .. _project1_classes:
