@@ -10,7 +10,7 @@ Quick Scrolling
 * :ref:`Description <_project1_description>`
 * :ref:`Methodology <project1_methods>`
 * :ref:`Results <project1_results>`
-* :ref:`Sumary <project1_summary>`
+* :ref:`Summary <project1_summary>`
 * :ref:`Jupyter Notebook <project1_jupyter>`
 * :ref:`Methods and Classes <project1_classes>`
 
