@@ -43,7 +43,7 @@
 <li><p><span class="xref std std-ref">Description</span></p></li>
 <li><p><a class="reference internal" href="#project1-methods"><span class="std std-ref">Methodology</span></a></p></li>
 <li><p><a class="reference internal" href="#project1-results"><span class="std std-ref">Results</span></a></p></li>
-<li><p><a class="reference internal" href="#project1-summary"><span class="std std-ref">Sumary</span></a></p></li>
+<li><p><a class="reference internal" href="#project1-summary"><span class="std std-ref">Summary</span></a></p></li>
 <li><p><a class="reference internal" href="#project1-jupyter"><span class="std std-ref">Jupyter Notebook</span></a></p></li>
 <li><p><a class="reference internal" href="#project1-classes"><span class="std std-ref">Methods and Classes</span></a></p></li>
 </ul>
@@ -73,11 +73,12 @@ After a particles initial position (<span class="math notranslate nohighlight">\
 <div><div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}d = -\frac{ln(\xi)}{\Sigma_{maj}}\\\pmb{r} = \pmb{r_0} + d \pmb{\Omega}\end{aligned}\end{align} \]</div>
 </div></blockquote>
-<dl class="simple">
-<dt>where,</dt><dd><p><span class="math notranslate nohighlight">\(\xi\)</span> is a random number between 0 and 1.</p>
+<dl>
+<dt>where,</dt><dd><p><span class="math notranslate nohighlight">\(\xi\)</span> is a random number between 0 and 1,</p>
+<p><span class="math notranslate nohighlight">\(\Sigma_{maj}\)</span> is the majorant cross section (taken as the largest cross section in the problem).</p>
 </dd>
 </dl>
-<p>If the neutron does not leak (<span class="math notranslate nohighlight">\(\pmb{r}\)</span> lies outside the problem boundaries), Delta Tracking normally then performs a rejection/acceptance technique by rolling a random number to determine whether to accept this collision.
+<p>If the neutron does not leak (<span class="math notranslate nohighlight">\(\pmb{r}\)</span> still lies within the problem boundaries), Delta Tracking normally then performs a rejection/acceptance technique by rolling a random number to determine whether to accept this collision.
 Instead of rejecting potential collisions, WTD instead accepts every collision and adjusts the particle weight according to the ratio between the total
 and majorant cross section. The total cross section is taken at <span class="math notranslate nohighlight">\(\pmb{r}\)</span> while the majorant cross section is the maximum cross section in the problem.</p>
 <p>Since the particle is assumed to collide, we first compute and update the score as:</p>
@@ -100,7 +101,7 @@ and majorant cross section. The total cross section is taken at <span class="mat
 <span id="rr"></span><h3>Russian Roulette<a class="headerlink" href="#russian-roulette" title="Link to this heading">¶</a></h3>
 <p>To avoid particles with extremely low weights (and thus avoid tracking particles with little contribution to the overall problem), Russian Roulette can be “played”
 after a particles weight is updated coming out of a collision. First a threshold weight, <span class="math notranslate nohighlight">\(w_{th} \approx 0.25\)</span> is chosen to define a cutoff
-at which the Russian Roulette subroutine is run. Then, a random number, <span class="math notranslate nohighlight">\(\eta\)</span> is rolled. If <span class="math notranslate nohighlight">\(\eta\)</span> is found to be less than the current
+at which the Russian Roulette subroutine is run. Then, a random number, <span class="math notranslate nohighlight">\(\eta\)</span>, is rolled. If <span class="math notranslate nohighlight">\(\eta\)</span> is found to be less than the current
 particles weight, the particle survives and is set to its starting weight (usually 1.0). Otherwise, the particle is killed completely. The whole routine
 can be performed in the following code snippet:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">this_neutron</span><span class="o">.</span><span class="n">weight</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">0.25</span> <span class="o">/</span> <span class="n">starting_weight</span><span class="p">):</span>
@@ -316,9 +317,9 @@ can be performed in the following code snippet:</p>
 the results are within statistics of the true analytical solution.</p>
 <p>Additionally, for the case representing a reasonable Monte Carlo problem (Case 1), WDT appears to be the “best” method as the FoM is found to be the highest meaning
 it is the most efficient method from a computational standpoint.</p>
-<p>However, both the performance of both Delta Tracking methods degrades significantly in Case 2 - the Surface Tracking method is found to be much more
+<p>However, the performance of both Delta Tracking methods degrade significantly in Case 2 - the Surface Tracking method is found to be much more
 computationally efficient. This is primarily due to the majorant cross section being very large for the problem of interest.</p>
-<p>Finally, Case 3 resembles a problem where Surface Tracking is known to perform very poorly in due to the large number of surfaces that a particle must cross
+<p>Finally, Case 3 resembles a problem where Surface Tracking is known to perform very poorly due to the large number of surfaces that a particle must cross
 before an interaction. The FoM for both the Delta Tracking methods is found to be higher than the FoM for the Surface Tracking methods in Case 3.</p>
 </section>
 <section id="summary">
@@ -332,16 +333,16 @@ in the case of a very large cross section at which it was found to be comparable
 </section>
 <section id="jupyter-notebook">
 <span id="project1-jupyter"></span><h1>Jupyter Notebook<a class="headerlink" href="#jupyter-notebook" title="Link to this heading">¶</a></h1>
-<p>A Jupyter Notebook is provided <a class="reference internal" href="project1_notebook.html#proj1-jupyter-notebook"><span class="std std-ref">HERE</span></a>.</p>
+<p>A Jupyter Notebook showing the work done is provided <a class="reference internal" href="project1_notebook.html#proj1-jupyter-notebook"><span class="std std-ref">HERE</span></a>.</p>
 </section>
 <section id="classes-and-objects">
 <span id="project1-classes"></span><h1>Classes and Objects<a class="headerlink" href="#classes-and-objects" title="Link to this heading">¶</a></h1>
 <dl class="simple">
 <dt>Classes and methods developed in this work:</dt><dd><ul class="simple">
-<li><p>Project 1 Module: <code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere</span></code></p></li>
-<li><p>Neutron Class: <code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.WeightedNeutron</span></code></p></li>
-<li><p>Weighted Delta Tracking: <code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.PointSourceInSphere._SolveWDT</span></code></p></li>
-<li><p>FOM Calculator: <code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.PointSourceInSphere.PrintFOM</span></code></p></li>
+<li><p>Project 1 Module: <a class="reference internal" href="__python_docs__/pointsource_sphere.html#module-pointsource_sphere" title="pointsource_sphere"><code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere</span></code></a></p></li>
+<li><p>Neutron Class: <a class="reference internal" href="__python_docs__/pointsource_sphere.html#pointsource_sphere.WeightedNeutron" title="pointsource_sphere.WeightedNeutron"><code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.WeightedNeutron</span></code></a></p></li>
+<li><p>Weighted Delta Tracking: <a class="reference internal" href="__python_docs__/pointsource_sphere.html#pointsource_sphere.PointSourceInSphere._SolveWDT" title="pointsource_sphere.PointSourceInSphere._SolveWDT"><code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.PointSourceInSphere._SolveWDT</span></code></a></p></li>
+<li><p>FOM Calculator: <a class="reference internal" href="__python_docs__/pointsource_sphere.html#pointsource_sphere.PointSourceInSphere.PrintFOM" title="pointsource_sphere.PointSourceInSphere.PrintFOM"><code class="xref py py-class docutils literal notranslate"><span class="pre">pointsource_sphere.PointSourceInSphere.PrintFOM</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
