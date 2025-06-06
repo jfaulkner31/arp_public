@@ -8,8 +8,19 @@ NRE7203 class documentation
 
 .. only:: html
 
-Documentation for NRE7203 - Advanced Reactor Physics
+.. image:: fancy_images/stars.gif
+	:align: center
+	:width: 2000
 
+.. image:: fancy_images/arp_rainbow.JPG
+	:align: center
+	:width: 2000
+
+.. image:: fancy_images/stars.gif
+	:align: center
+	:width: 2000
+
+Documentation for NRE7203 - Advanced Reactor Physics
 
 .. toctree::
    :maxdepth: 1
