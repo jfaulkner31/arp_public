@@ -1,0 +1,20 @@
+{% extends "!layout.html" %}
+
+{% block sidebarlogo %}
+  {{ super() }}
+
+
+  <font size="4.99">
+      Unique visitor count:
+  </font>
+
+  <!-- Add a visitor counter at the bottom of the sidebar -->
+  <p style="margin-top: 2em; text-align: center;">
+    <a href="https://www.hitwebcounter.com" target="_blank">
+      <img src="https://hitwebcounter.com/counter/counter.php?page=20951669&style=0014&nbdigits=3&type=ip&initCount=0"
+           title="Visitor counter"
+           alt="counter"
+           border="1">
+    </a>
+  </p>
+{% endblock %}
