@@ -74,15 +74,3 @@ Now with spherical harmonics!
      - .. image:: fancy_images/L10_M6.gif
          :width: 250
 
-
-Unique Visitors:
-
-.. raw:: html
-
-    <a href="https://www.hitwebcounter.com" target="_blank">
-        <img src="https://hitwebcounter.com/counter/counter.php?page=20951669&style=0006&nbdigits=5&type=ip&initCount=0"
-             title="Visitor counter"
-             Alt="counter"
-             border="0">
-    </a>
-
