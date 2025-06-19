@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath('projects/__python_files__'))
 # -- Project information -----------------------------------------------------
 
 project = 'NRE7203'
-copyright = 'Date, Your name'
-author = 'Your name'
+copyright = 'July, 2025 Jonathon Faulkner'
+author = 'Jonathon Faulkner'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'

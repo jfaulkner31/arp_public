@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>NRE 7203 - Advanced Reactor Physics - Homework 1 &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="A simple notebook for validating Simpson’s rule for a simple polynomial" href="project2_simpsons_test_notebook.html" />
+    <link rel="prev" title="transportcorrection module" href="../__python_docs__/transportcorrection.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="nre-7203-advanced-reactor-physics-homework-1">
+<span id="proj1-jupyter-notebook"></span><h1>NRE 7203 - Advanced Reactor Physics - Homework 1<a class="headerlink" href="#nre-7203-advanced-reactor-physics-homework-1" title="Link to this heading">¶</a></h1>
+<section id="jonathons-work-for-homework-1">
+<h2>JONATHONS WORK FOR HOMEWORK 1<a class="headerlink" href="#jonathons-work-for-homework-1" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import relevant packages</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointsource_sphere</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointSourceInSphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointsource_sphere</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlotSigT</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="c1"># Set default figure size</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define some constants</span>
+<span class="n">nMC</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">S0</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">12.0</span>
+<span class="n">nRegions_a</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nRegions_b</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nRegions_c</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">sigT_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nRegions_a</span><span class="p">)</span>
+
+<span class="n">sigT_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nRegions_b</span><span class="p">)</span>
+<span class="n">sigT_b</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="c1"># manually assign to 7th pos in array (starting from 0 so really pos 6 in python world).</span>
+
+<span class="n">sigT_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nRegions_c</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="calculation-a">
+<h3>Calculation a<a class="headerlink" href="#calculation-a" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculation a</span>
+<span class="n">mc</span> <span class="o">=</span> <span class="n">PointSourceInSphere</span><span class="p">(</span><span class="n">nMC</span><span class="o">=</span><span class="n">nMC</span><span class="p">,</span> <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT_a</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;wdt&#39;</span><span class="p">)</span>
+
+<span class="c1"># EXECUTION TIMES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTION TIMES&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ST = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;ST&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;DT&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WDT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;WDT&#39;</span><span class="p">]))</span>
+
+<span class="c1"># LEAKAGES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">LEAKAGE&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analytic Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resAN</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/ST Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/DT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/WDT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+
+
+<span class="c1"># FIGURE OF MERITS</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">FOMs&quot;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;WDT&#39;</span><span class="p">)</span>
+
+<span class="c1"># FLUXES</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PlotFluxes</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+<span class="c1"># Deepcopy data:</span>
+<span class="n">mc_a</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+
+<span class="c1"># Save figure</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;Results/Figure_a.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Now solving with method: analytic
+Now solving with method: ST
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 3.873950958251953
+
+
+
+Now solving with method: DT
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 3.5577402114868164
+
+
+
+Now solving with method: wdt
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 4.57941746711731
+
+
+
+EXECUTION TIMES
+ST = 3.87395
+DT = 3.55774
+WDT = 4.57942
+
+LEAKAGE
+Analytic Leakage = 12.79313 %
+MC/ST Leakage = 12.81720 % pm 0.46496
+MC/DT Leakage = 12.86280 % pm 0.55292
+MC/WDT Leakage = 12.70944 % pm 0.39017
+
+FOMs
+FOM - ST: 0.00031194857915035066
+FOM - DT: 0.0002407959257579548
+FOM - WDT: 0.0003618540003301058
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_5_1.png" src="../../_images/NRE7203_HOMEWORK1_5_1.png" />
+</section>
+<section id="calculation-b">
+<h3>Calculation b<a class="headerlink" href="#calculation-b" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mc</span> <span class="o">=</span> <span class="n">PointSourceInSphere</span><span class="p">(</span><span class="n">nMC</span><span class="o">=</span><span class="n">nMC</span><span class="p">,</span> <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT_b</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;wdt&#39;</span><span class="p">)</span>
+
+<span class="c1"># EXECUTION TIMES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTION TIMES&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ST = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;ST&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;DT&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WDT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;WDT&#39;</span><span class="p">]))</span>
+
+<span class="c1"># LEAKAGES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analytic Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resAN</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/ST Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/DT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/WDT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+
+<span class="c1"># FIGURE OF MERITS</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">FOMs&quot;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;WDT&#39;</span><span class="p">)</span>
+
+<span class="c1"># FLUXES</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PlotFluxes</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+<span class="c1"># Deepcopy data:</span>
+<span class="n">mc_b</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+
+<span class="c1"># Save figure</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;Results/Figure_b.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Now solving with method: analytic
+Now solving with method: ST
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 3.795607089996338
+
+
+
+Now solving with method: DT
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 17.01483416557312
+
+
+
+Now solving with method: wdt
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 35.381208419799805
+
+
+
+EXECUTION TIMES
+ST = 3.79561
+DT = 17.01483
+WDT = 35.38121
+Analytic Leakage = 2.90537 %
+MC/ST Leakage = 2.90860 % pm 0.21444
+MC/DT Leakage = 2.94320 % pm 0.22673
+MC/WDT Leakage = 2.89972 % pm 0.19785
+
+FOMs
+FOM - ST: 0.00035371562390919915
+FOM - DT: 8.012064679268595e-05
+FOM - WDT: 7.527196584226644e-05
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_7_1.png" src="../../_images/NRE7203_HOMEWORK1_7_1.png" />
+</section>
+<section id="calculation-c">
+<h3>Calculation c<a class="headerlink" href="#calculation-c" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mc</span> <span class="o">=</span> <span class="n">PointSourceInSphere</span><span class="p">(</span><span class="n">nMC</span><span class="o">=</span><span class="n">nMC</span><span class="p">,</span> <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT_c</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="s1">&#39;wdt&#39;</span><span class="p">)</span>
+
+<span class="c1"># EXECUTION TIMES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTION TIMES&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ST = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;ST&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;DT&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WDT = </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;WDT&#39;</span><span class="p">]))</span>
+
+<span class="c1"># LEAKAGES</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analytic Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resAN</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/ST Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resST</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/DT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MC/WDT Leakage = </span><span class="si">{:.5f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;leakage&#39;</span><span class="p">]),</span> <span class="s2">&quot;pm </span><span class="si">{:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">mc</span><span class="o">.</span><span class="n">resWDT</span><span class="p">[</span><span class="s1">&#39;errleakage&#39;</span><span class="p">]))</span>
+
+<span class="c1"># FIGURE OF MERITS</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">FOMs&quot;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;DT&#39;</span><span class="p">)</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PrintFOM</span><span class="p">(</span><span class="s1">&#39;WDT&#39;</span><span class="p">)</span>
+
+<span class="c1"># FLUXES</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">PlotFluxes</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+<span class="c1"># Deepcopy data:</span>
+<span class="n">mc_c</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+
+<span class="c1"># Save figure</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;Results/Figure_c.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Now solving with method: analytic
+Now solving with method: ST
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 6.552052974700928
+
+
+
+Now solving with method: DT
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 3.69978404045105
+
+
+
+Now solving with method: wdt
+Running generation 0
+Running generation 10
+Running generation 20
+Running generation 30
+Running generation 40
+Running generation 50
+Running generation 60
+Running generation 70
+Running generation 80
+Running generation 90
+Finished after 99 MC runs! Time was 4.0094358921051025
+
+
+
+EXECUTION TIMES
+ST = 6.55205
+DT = 3.69978
+WDT = 4.00944
+Analytic Leakage = 10.48701 %
+MC/ST Leakage = 10.54000 % pm 0.41469
+MC/DT Leakage = 10.50660 % pm 0.42146
+MC/WDT Leakage = 10.44587 % pm 0.35399
+
+FOMs
+FOM - ST: 0.0002217139946331617
+FOM - DT: 0.00036997018345799365
+FOM - WDT: 0.000429480888408497
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_9_1.png" src="../../_images/NRE7203_HOMEWORK1_9_1.png" />
+<section id="plotting-sigma-total">
+<h4>PLOTTING SIGMA TOTAL<a class="headerlink" href="#plotting-sigma-total" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PlotSigT</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc_a</span><span class="p">,</span> <span class="n">yLower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">yUpper</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_11_0.png" src="../../_images/NRE7203_HOMEWORK1_11_0.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PlotSigT</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc_b</span><span class="p">,</span> <span class="n">yLower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">yUpper</span><span class="o">=</span><span class="mf">3.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_12_0.png" src="../../_images/NRE7203_HOMEWORK1_12_0.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PlotSigT</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc_c</span><span class="p">,</span> <span class="n">yLower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">yUpper</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/NRE7203_HOMEWORK1_13_0.png" src="../../_images/NRE7203_HOMEWORK1_13_0.png" />
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="../__python_docs__/transportcorrection.html" title="previous chapter">transportcorrection module</a></li>
+      <li>Next: <a href="project2_simpsons_test_notebook.html" title="next chapter">A simple notebook for validating Simpson’s rule for a simple polynomial</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__notebooks__/project1_notebook.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

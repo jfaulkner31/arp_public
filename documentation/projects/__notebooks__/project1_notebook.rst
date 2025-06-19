@@ -151,7 +151,7 @@ Calculation a
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_5_1.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_5_1.png
 
 
 Calculation b
@@ -261,7 +261,7 @@ Calculation b
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_7_1.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_7_1.png
 
 
 Calculation c
@@ -370,7 +370,7 @@ Calculation c
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_9_1.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_9_1.png
 
 
 PLOTTING SIGMA TOTAL
@@ -382,7 +382,7 @@ PLOTTING SIGMA TOTAL
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_11_0.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_11_0.png
 
 
 .. code::
@@ -391,7 +391,7 @@ PLOTTING SIGMA TOTAL
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_12_0.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_12_0.png
 
 
 .. code::
@@ -400,5 +400,5 @@ PLOTTING SIGMA TOTAL
 
 
 
-.. image:: NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_13_0.png
+.. image:: ../NRE7203_HOMEWORK1_files/NRE7203_HOMEWORK1_13_0.png
 

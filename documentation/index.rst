@@ -12,27 +12,39 @@ NRE7203 class documentation
 	:align: center
 	:width: 2000
 
-.. image:: fancy_images/arp_rainbow.JPG
-	:align: center
-	:width: 2000
+.. list-table::
+   :widths: auto
+   :align: center
+   :class: no-border
+
+   * - .. image:: fancy_images/L10_M2.gif
+         :width: 250
+     - .. image:: fancy_images/arp_rainbow.JPG
+         :width: 1500
+     - .. image:: fancy_images/L7_M7.gif
+         :width: 250
 
 .. image:: fancy_images/stars.gif
 	:align: center
 	:width: 2000
 
-Documentation for NRE7203 - Advanced Reactor Physics
+.. raw:: html
 
+   <div class="vspace"></div>
+
+Contents
+==================
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
 
    overview
    contributors
    projects/index
    glossary
 
+.. raw:: html
 
-
+   <div class="vspace"></div>
 
 Indices and tables
 ==================
@@ -40,3 +52,27 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. raw:: html
+
+   <div class="vspace"></div>
+
+Now with spherical harmonics!
+"""""""""""""""""""""""""""""
+
+.. list-table::
+   :widths: auto
+   :align: center
+   :class: no-border
+
+   * - .. image:: fancy_images/L1_M1.gif
+         :width: 250
+     - .. image:: fancy_images/L2_M1.gif
+         :width: 250
+     - .. image:: fancy_images/L6_M3.gif
+         :width: 250
+     - .. image:: fancy_images/L10_M6.gif
+         :width: 250
+
+
+

@@ -1,0 +1,12 @@
+Some valuable stuff is in documentation/conf.py
+
+Custom CSS stuff in documentation/_static/custom.css
+
+To compile stuff do:
+bash compile_documentation.sh
+
+To push to github do:
+bash pushgit.sh
+
+To turn jupyter into a rst file:
+jupyter nbconvert --to=rst filename.ipynb

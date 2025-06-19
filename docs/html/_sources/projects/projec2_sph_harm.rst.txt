@@ -1,0 +1,12 @@
+.. _proj2_sph_harm:
+
+Project 2: Spherical Harmonics
+---------------------------------------------
+A few spherical harmonics functions are plotted:
+
+		.. math::
+			Y(\theta, \varphi)
+
+.. image:: ../__notebooks__/project2_workshop_spherical_harmonics_files/
+	:align: center
+	:width: 2000

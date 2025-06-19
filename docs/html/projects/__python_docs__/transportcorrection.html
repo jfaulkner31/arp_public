@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>transportcorrection module &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../../glossary.html" />
+    <link rel="prev" title="pointsource_sphere module" href="pointsource_sphere.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-transportcorrection">
+<span id="transportcorrection-module"></span><h1>transportcorrection module<a class="headerlink" href="#module-transportcorrection" title="Link to this heading">¶</a></h1>
+<p>transportcorrection.py</p>
+<p>Transport correction factors based on a function that finds the correction factor analytically.
+The transport correction relies on the slowing down theory in an infinite
+homogeneous medium.</p>
+<p>Created on Mon June 09 17:10:00 2025 &#64;author: Dan Kotlyar
+Last updated on Mon June 19 12:08:00 2025 &#64;author: Jonathon Faulkner</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.InfFlux_INCLASS">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">InfFlux_INCLASS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.InfFlux_INCLASS" title="Link to this definition">¶</a></dt>
+<dd><p>Solves for the infinite flux using the trapezoid rule
+solution to eq. 6.4</p>
+<p>INCLASS EXAMPLE</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>array</em>) – energy mesh points.</p></li>
+<li><p><strong>sigS</strong> (<em>array</em>) – scattering cross section as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>src</strong> (<em>array</em>) – assumed source as a function of energy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>flx</strong> – flux values for all the energy points</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.Plot1d">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">Plot1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'--*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markerfill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.Plot1d" title="Link to this definition">¶</a></dt>
+<dd><p>Plots a 1D solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>power</strong> (<em>bool</em><em>, </em><em>optional</em>) – if <code class="docutils literal notranslate"><span class="pre">power</span></code> is <cite>True</cite> or not included the
+power distribution is plotted, otherwise not</p></li>
+<li><p><strong>xvals</strong> (<em>np.ndarray</em>) – x-axis values</p></li>
+<li><p><strong>yvals</strong> (<em>np.array</em>) – y-axis values</p></li>
+<li><p><strong>xlabel</strong> (<em>str</em>) – x-axis label with a default <code class="docutils literal notranslate"><span class="pre">Length,</span> <span class="pre">meters</span></code></p></li>
+<li><p><strong>ylabel</strong> (<em>str</em>) – y-axis label with a default <code class="docutils literal notranslate"><span class="pre">Normalized</span> <span class="pre">Flux</span></code></p></li>
+<li><p><strong>fontsize</strong> (<em>float</em>) – font size value</p></li>
+<li><p><strong>markers</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>strings</em>) – markers type</p></li>
+<li><p><strong>markerfill</strong> (<em>bool</em>) – True if the marking filling to be included and False otherwise</p></li>
+<li><p><strong>markersize</strong> (<em>int</em><em> or </em><em>float</em>) – size of the marker with a default of 8.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.TRCSolver">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">TRCSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intRule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.TRCSolver" title="Link to this definition">¶</a></dt>
+<dd><p>Solves for the transport correction factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>np.ndarray</em>) – Energy points.</p></li>
+<li><p><strong>flx</strong> (<em>np.ndarray</em>) – Neutron flux from infFluxSolver</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Atomic mass number</p></li>
+<li><p><strong>intRule</strong> (<em>str</em>) – Either ‘trap’ or ‘simp’ for trapezoidal or Simpson’s rule for integration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tau</strong> – Transport correction ratio</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection._scatteringWeightGrabber">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">_scatteringWeightGrabber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intRule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection._scatteringWeightGrabber" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function - gets a matrix of weights for inscattering from groups E’ into group E.</p>
+<p>Returns weight matrix for numerical integration.</p>
+<p>This is used in infFluxSolver and analyticTRC</p>
+<blockquote>
+<div><dl class="simple">
+<dt>energy<span class="classifier">np.ndarray</span></dt><dd><p>Energy points.</p>
+</dd>
+<dt>A<span class="classifier">float</span></dt><dd><p>Atomic mass number</p>
+</dd>
+<dt>intRule<span class="classifier">str</span></dt><dd><p>Either ‘trap’ or ‘simp’ for trapezoidal or Simpson’s rule for integration.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>mtxW<span class="classifier">2d np.ndarray</span></dt><dd><p>Matrix for scattering weights based on value of A</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection._test_numerical_integration">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">_test_numerical_integration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection._test_numerical_integration" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to test numerical integration using numericalWeights and compare
+as changes are made to the code.</p>
+<p>Simpsons rule with even N should return EXACT values for the given polynomial.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.analyticTRC_INCLASS">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">analyticTRC_INCLASS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.analyticTRC_INCLASS" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the transport correction factor using the trapezoid rule
+assuming that absorption is zero</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>array</em>) – energy mesh points.</p></li>
+<li><p><strong>flx</strong> (<em>array</em>) – assumed source as a function of energy.</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Atomic mass number for the colliding nuclide</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tau</strong> – transport correction coefficient</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.energyInterpolation">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">energyInterpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energyN</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowerE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upperE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lin'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.energyInterpolation" title="Link to this definition">¶</a></dt>
+<dd><p>Create a fine energy structure for all the variables by interpolation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>np.ndarray</em>) – energy mesh points.</p></li>
+<li><p><strong>sigS</strong> (<em>np.ndarray</em>) – scattering cross section as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>np.ndarray</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>flx</strong> (<em>np.ndarray</em>) – neutron flux as a function of energy.</p></li>
+<li><p><strong>energyN</strong> (<em>int</em>) – number of energy points.</p></li>
+<li><p><strong>lowerE</strong> (<em>float</em>) – lowest energy in eV</p></li>
+<li><p><strong>upperE</strong> (<em>float</em>) – highest energy in eV</p></li>
+<li><p><strong>interpType</strong> (<em>str</em>) – wanted interpolation type(options: ‘log’ and ‘lin’) default is ‘lin’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>energy1</strong> (<em>: np.ndarray</em>) – fine energy mesh points.</p></li>
+<li><p><strong>sigS1</strong> (<em>: np.ndarray</em>) – fine scattering cross section as a function of energy.</p></li>
+<li><p><strong>sigT1</strong> (<em>: np.ndarray</em>) – fine total cross section as a function of energy.</p></li>
+<li><p><strong>flx1</strong> (<em>: np.ndarray</em>) – fine assumed neutron flux as a function of energy.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.getNumericalWeights">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">getNumericalWeights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.getNumericalWeights" title="Link to this definition">¶</a></dt>
+<dd><p>Takes in a vector x and returns numerical integration weights based on a given rule.</p>
+<p>Weights are used for integrals - e.g. sum( W_row * f(x)) ~= int(f(x) dx)</p>
+<p>This function only cares about the WEIGHTS.</p>
+<p>So to integrate f(x) one would call this for the weights and then get f(x) from elsewhere.</p>
+<blockquote>
+<div><dl>
+<dt>Example:</dt><dd><p>test_x = np.linspace(-10,10,10)
+test_f = test_x**3 + 5.0*test_x**2 - 2.125*test_x**1 - 1.1521  # function f(x)
+trap_weights = numericalWeights(x=test_x, rule=’simp’)</p>
+<p>integrated = np.sum(trap_weights * test_f)</p>
+<p>print(integrated)</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>x<span class="classifier">array</span></dt><dd><p>x points.</p>
+</dd>
+<dt>rule<span class="classifier">str</span></dt><dd><p>Either ‘trap’ or ‘simp’ for Trapezoid Rule or
+‘Composite Simpson’s rule for irregularly spaced data’</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>W_row<span class="classifier">array</span></dt><dd><p>Weights for integration as a 1D np.ndarray</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.infFluxSolver">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">infFluxSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intRule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.infFluxSolver" title="Link to this definition">¶</a></dt>
+<dd><p>Solves for the infinite neutron flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>np.ndarray</em>) – Energy points.</p></li>
+<li><p><strong>sigS</strong> (<em>np.ndarray</em>) – Scattering xs</p></li>
+<li><p><strong>sigT</strong> (<em>np.ndarray</em>) – Total xs</p></li>
+<li><p><strong>src</strong> (<em>np.ndarray</em>) – Neutron source.</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Atomic mass number</p></li>
+<li><p><strong>intRule</strong> (<em>str</em>) – Either ‘trap’ or ‘simp’ for trapezoidal or Simpson’s rule for integration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flx</strong> (<em>np.ndarray</em>) – Neutron flux</p></li>
+<li><p><strong>mtxW</strong> (<em>np.ndarray</em>) – 2D matrix showing the weights for solving</p></li>
+<li><p><strong>mtxK</strong> (<em>np.ndarray</em>) – 2D matrix showing the K values</p></li>
+<li><p><strong>mtxA</strong> (<em>np.ndarray</em>) – 2D matrix A</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.plot_matrix">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">plot_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">black_white</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.plot_matrix" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>array</em>) – Matrix to plot/show</p></li>
+<li><p><strong>black_white</strong> (<em>bool</em>) – Whether to use black or white representation or plot using color.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="transportcorrection.solveFluxAndTRC">
+<span class="sig-prename descclassname"><span class="pre">transportcorrection.</span></span><span class="sig-name descname"><span class="pre">solveFluxAndTRC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isotopeMass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energyN</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowerE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upperE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotFluxMatrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotTaus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transportcorrection.solveFluxAndTRC" title="Link to this definition">¶</a></dt>
+<dd><p>Solves for the infinite flux and then solves for the transport correction factor for the given inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataPath</strong> (<em>str</em>) – Path to file containing xs csv (energy,total,scattering)</p></li>
+<li><p><strong>isotopeMass</strong> (<em>float</em>) – Mass (A) of isotope that scattering occurs in</p></li>
+<li><p><strong>energyN</strong> (<em>int</em>) – Number of energy points for energy grid.</p></li>
+<li><p><strong>lowerE</strong> (<em>float</em>) – Lower energy boundary</p></li>
+<li><p><strong>upperE</strong> (<em>float</em>) – Upper energy boundary</p></li>
+<li><p><strong>src</strong> (<em>np.ndarray</em>) – Neutron source (should be normalized to 1.0)</p></li>
+<li><p><strong>rule</strong> (<em>str</em>) – Either ‘trap’ or ‘simp’ for Trapezoid Rule or
+‘Composite Simpson’s rule for irregularly spaced data’
+This rule is used for numerical integration for flux and TRC.</p></li>
+<li><p><strong>plotFluxMatrix</strong> (<em>bool</em>) – Whether or not to show a plot of the matrix used for computing the flux.
+Used for validation purposes. Matrix that is plotted is matrix A.</p></li>
+<li><p><strong>plotTaus</strong> (<em>bool</em>) – Plots TCR as a function of energy after solving.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>energy1</strong> (<em>np.ndarray</em>) – Energy vector used for plotting/solving TRC/flx</p></li>
+<li><p><strong>tau</strong> (<em>np.ndarray</em>) – Transport correction ratio</p></li>
+<li><p><strong>tau0</strong> (<em>np.ndarray</em>) – Asymptotic value for TRC</p></li>
+<li><p><strong>flx</strong> (<em>np.ndarray</em>) – Infinite media neutron flux</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="pointsource_sphere.html" title="previous chapter">pointsource_sphere module</a></li>
+      <li>Next: <a href="../../glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__python_docs__/transportcorrection.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

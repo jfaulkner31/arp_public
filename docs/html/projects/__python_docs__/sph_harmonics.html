@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>sph_harmonics module &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="../__notebooks__/project1_notebook.html" />
+    <link rel="prev" title="transportcorrection module" href="transportcorrection.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-sph_harmonics">
+<span id="sph-harmonics-module"></span><h1>sph_harmonics module<a class="headerlink" href="#module-sph_harmonics" title="Link to this heading">¶</a></h1>
+<p>sphericalharmonics</p>
+<p>Plots and animates spherical harmonics functions for different
+l and m values</p>
+<p>Created on Sun June 01 06:45:00 2025 &#64;author: Dan Kotlyar
+Last updated on Sun June 19 03:00:00 2025 &#64;author: Jonathon Faulkner</p>
+<p>email: <a class="reference external" href="mailto:dan&#46;kotlyar&#37;&#52;&#48;me&#46;gatech&#46;edu">dan<span>&#46;</span>kotlyar<span>&#64;</span>me<span>&#46;</span>gatech<span>&#46;</span>edu</a></p>
+<p>email: <a class="reference external" href="mailto:jfaulkner31&#37;&#52;&#48;gatech&#46;edu">jfaulkner31<span>&#64;</span>gatech<span>&#46;</span>edu</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.BibicallyAccurateSphericalHarmonics">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">BibicallyAccurateSphericalHarmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nangles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimRot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doPlot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.BibicallyAccurateSphericalHarmonics" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the spherical harmonics data but cooler looking this time!</p>
+<p>Bibically accurate spherical harmonics - e.g. plots the shapes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>int</em>) – order of the moment</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – order of the sub-moment</p></li>
+<li><p><strong>sphType</strong> (<em>str</em>) – real or imag</p></li>
+<li><p><strong>nangles</strong> (<em>int</em>) – number of angles for meshing theta and phi</p></li>
+<li><p><strong>azimRot</strong> (<em>str</em>) – Rotation of the Azimuthal on the plot.</p></li>
+<li><p><strong>elev</strong> (<em>int</em>) – Elevation degrees. use zero for a flat 2D plot</p></li>
+<li><p><strong>dpi</strong> (<em>int</em>) – Resolution of the generated figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – Filename that we want to save as (if empty we do not save any figures.)</p></li>
+<li><p><strong>doPlot</strong> (<em>bool</em>) – Whether or not to plot the figure saved in memory at the end.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.animateSphHarm">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">animateSphHarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nFrames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'real'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nangles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.animateSphHarm" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the spherical harmonics data for the full range of theta and phi</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nFrames</strong> (<em>int</em>) – number of frames</p></li>
+<li><p><strong>l</strong> (<em>int</em>) – order of the moment</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – order of the sub-moment</p></li>
+<li><p><strong>sphType</strong> (<em>str</em>) – real or imag</p></li>
+<li><p><strong>nangles</strong> (<em>int</em>) – number of angles for meshing theta and phi</p></li>
+<li><p><strong>elev</strong> (<em>int</em>) – elevation degrees. use zero for a flat 2D plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.getSphHarm">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">getSphHarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nangles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.getSphHarm" title="Link to this definition">¶</a></dt>
+<dd><p>Get the spherical harmonics data for the full range of theta and phi</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>int</em>) – order of the moment</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – order of the sub-moment</p></li>
+<li><p><strong>sphType</strong> (<em>str</em>) – real or imag</p></li>
+<li><p><strong>nangles</strong> (<em>int</em>) – number of angles for meshing theta and phi</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.gifMaker">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">gifMaker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.gifMaker" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a GIF from a list of image files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_filename</strong> (<em>str</em>) – Filename that we want to save as.</p></li>
+<li><p><strong>duration</strong> (<em>float</em>) – Time between frames in milliseconds</p></li>
+<li><p><strong>filenames</strong> (<em>list</em>) – List of filenames (in order) of what pictures to use in gif.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.imageCropper">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">imageCropper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_inches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_inches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_inches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom_inches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.imageCropper" title="Link to this definition">¶</a></dt>
+<dd><p>Crops an image given dimensions to crop off.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Filename of the image to crop.</p></li>
+<li><p><strong>outname</strong> (<em>str</em>) – Output name of the image that is cropped</p></li>
+<li><p><strong>left_inches</strong> (<em>float</em>) – Number of inches to cut off the left</p></li>
+<li><p><strong>right_inches</strong> (<em>float</em>) – Number of inches to cut off the right</p></li>
+<li><p><strong>top_inches</strong> (<em>float</em>) – Number of inches to cut off the top</p></li>
+<li><p><strong>bottom_inches</strong> (<em>float</em>) – Number of inches to cut off the bottom</p></li>
+<li><p><strong>dpi</strong> (<em>int</em>) – DPI of the original image</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sph_harmonics.plotSphHarm">
+<span class="sig-prename descclassname"><span class="pre">sph_harmonics.</span></span><span class="sig-name descname"><span class="pre">plotSphHarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'real'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nangles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimRot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sph_harmonics.plotSphHarm" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the spherical harmonics data on a unit sphere for the full range of theta and phi</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>int</em>) – order of the moment</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – order of the sub-moment</p></li>
+<li><p><strong>sphType</strong> (<em>str</em>) – real or imag</p></li>
+<li><p><strong>nangles</strong> (<em>int</em>) – number of angles for meshing theta and phi</p></li>
+<li><p><strong>pltMode</strong> (<em>str</em>) – plot mode with either “sphere” or “radial” as options</p></li>
+<li><p><strong>elev</strong> (<em>int</em>) – elevation degrees. use zero for a flat 2D plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="transportcorrection.html" title="previous chapter">transportcorrection module</a></li>
+      <li>Next: <a href="../__notebooks__/project1_notebook.html" title="next chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__python_docs__/sph_harmonics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

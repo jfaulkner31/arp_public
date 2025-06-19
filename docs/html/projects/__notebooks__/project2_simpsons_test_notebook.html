@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A simple notebook for validating Simpson’s rule for a simple polynomial &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../../glossary.html" />
+    <link rel="prev" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="project1_notebook.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="a-simple-notebook-for-validating-simpsons-rule-for-a-simple-polynomial">
+<span id="proj2-simpsons-test"></span><h1>A simple notebook for validating Simpson’s rule for a simple polynomial<a class="headerlink" href="#a-simple-notebook-for-validating-simpsons-rule-for-a-simple-polynomial" title="Link to this heading">¶</a></h1>
+<p>First we run _test_numerical_integration() to integrate the following
+polynomial using both trapezoid and simpsons rule’s for integration.</p>
+<p><span class="math notranslate nohighlight">\(f(x) = x^3 +5x^2 -2.125x - 1.1521\)</span></p>
+<p>And the exact result is:</p>
+<p><span class="math notranslate nohighlight">\(\int_{-10}^{10}f(x)dx = 3310.291333333333\)</span></p>
+<p>Since Simpson’s rule integrates polynomials of up to and including
+degree three exactly, then we should get exact results when using
+Simpson’s rule here</p>
+<p>Simpsons rule requires an even number of ‘bins’ but can be used with an
+odd number of bins which we have also implemented - when using an odd
+number of bins integration will be ‘close’ but not exact - whereas an
+even number of bins will provide the exact result</p>
+<section id="see-composite-simpsons-rule-for-irregularly-spaced-data">
+<h2>See: Composite Simpson’s rule for irregularly spaced data<a class="headerlink" href="#see-composite-simpsons-rule-for-irregularly-spaced-data" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Simpson%27s_rule">https://en.wikipedia.org/wiki/Simpson%27s_rule</a></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># First we test the implemented numerical integration</span>
+<span class="c1"># functions to prove to ourselves that our methods</span>
+<span class="c1"># are not gibberish since latest code update</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transportcorrection</span><span class="w"> </span><span class="kn">import</span> <span class="n">_test_numerical_integration</span>
+<span class="n">_test_numerical_integration</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Now</span> <span class="n">running</span> <span class="n">numerical</span> <span class="n">integration</span> <span class="k">for</span> <span class="n">various</span> <span class="n">settings</span> <span class="o">...</span>
+<span class="n">Simpsons</span> <span class="n">rule</span> <span class="k">with</span> <span class="n">even</span> <span class="n">N</span> <span class="n">should</span> <span class="n">be</span> <span class="n">exact</span> <span class="n">since</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">of</span> <span class="n">low</span> <span class="n">enough</span> <span class="n">polynomial</span> <span class="n">order</span><span class="o">.</span>
+<span class="n">Exact</span><span class="p">:</span> <span class="mf">3310.291333333333</span>
+<span class="n">Simpsons</span> <span class="n">Rule</span> <span class="n">Odd</span> <span class="n">N</span><span class="p">:</span> <span class="mf">3316.387964944368</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">0.00018858909606933594</span>
+<span class="n">Simpsons</span> <span class="n">Rule</span> <span class="n">Even</span> <span class="n">N</span><span class="p">:</span> <span class="mf">3310.291333333333</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">6.198883056640625e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">:</span> <span class="mf">3376.9579999999996</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.3882598876953125e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">20</span><span class="p">:</span> <span class="mf">3326.958</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.078315734863281e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">30</span><span class="p">:</span> <span class="mf">3317.6987407407405</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.14984130859375e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">40</span><span class="p">:</span> <span class="mf">3314.4579999999996</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.078315734863281e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">:</span> <span class="mf">3312.9579999999996</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.1975250244140625e-05</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">:</span> <span class="mf">3310.2980133533592</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">0.0002682209014892578</span>
+<span class="n">Trapezoid</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">3000</span><span class="p">:</span> <span class="mf">3310.292074568148</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">0.00017452239990234375</span>
+<span class="n">Simpsons</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">3000</span><span class="p">:</span> <span class="mf">3310.2913333333336</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">0.0015559196472167969</span>
+<span class="n">Simpsons</span> <span class="n">Rule</span> <span class="n">N</span><span class="o">=</span><span class="mi">2999</span><span class="p">:</span> <span class="mf">3310.2913333338333</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">0.0015690326690673828</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="project1_notebook.html" title="previous chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+      <li>Next: <a href="../../glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__notebooks__/project2_simpsons_test_notebook.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
