@@ -47,10 +47,16 @@
 <li><p><a class="reference internal" href="#proj3-jupyter"><span class="std std-ref">Jupyter Notebook</span></a></p></li>
 <li><p><a class="reference internal" href="#proj3-classes"><span class="std std-ref">Methods and Classes</span></a></p></li>
 </ul>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p id="proj3-description">This project involves the calculation of diffusion coefficients through a variety of methods. The out-scattering, in-scattering, flux-limited, and Hydrogen-corrected methods are covered.
 Additionally, the <span class="math notranslate nohighlight">\(B_1\)</span>, <span class="math notranslate nohighlight">\(P_1\)</span>, and CM methods for computing the critical spectrum (and then a diffusion coefficient) are discussed.</p>
+</section>
+<section id="methods">
+<span id="proj3-methods"></span><h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h2>
 <section id="in-scatter">
-<span id="proj3-methods"></span><h3>In-Scatter<a class="headerlink" href="#in-scatter" title="Link to this heading">¶</a></h3>
+<h3>In-Scatter<a class="headerlink" href="#in-scatter" title="Link to this heading">¶</a></h3>
 <p>The in-scatter method comes from the P1 equations and computes the diffusion coefficient as:</p>
 <blockquote>
 <div><div class="math notranslate nohighlight">
@@ -79,7 +85,7 @@ The implementation in this code is to compute the current using a fictitious buc
 </section>
 <section id="flux-limited">
 <h3>Flux-Limited<a class="headerlink" href="#flux-limited" title="Link to this heading">¶</a></h3>
-<p>The flux limited approach is similar to the in-scatter approach except the neutron current, which is usually unknown, is replaced by the neutron flux.
+<p>The flux-limited approach is similar to the in-scatter approach except the neutron current, which is usually unknown, is replaced by the neutron flux.
 The idea is to replace the neutron current by the known neutron flux spectra.</p>
 <blockquote>
 <div><div class="math notranslate nohighlight">
@@ -87,7 +93,207 @@ The idea is to replace the neutron current by the known neutron flux spectra.</p
 <div class="math notranslate nohighlight">
 \[D_g = \frac{1}{3\Sigma_{tr,g}}\]</div>
 </div></blockquote>
-<span class="target" id="proj3-classes"><span id="proj3-jupyter"></span><span id="proj3-summary"></span><span id="proj3-results"></span></span></section>
+</section>
+<section id="hydrogen-corrected">
+<h3>Hydrogen-Corrected<a class="headerlink" href="#hydrogen-corrected" title="Link to this heading">¶</a></h3>
+<p>The Hydrogen-corrected approach considers most of the anisotropy to belong to the moderator (which is generally true for LWR’s).
+Two calculations are normally run - a medium of pure moderating material (pure Hydrogen) and a typical fuel assembly (FA).</p>
+<p>The approach subtracts the “bad” out-scattering based component of the homogenized out-scattering transport xs and then adds a “good” in-scatter based xs.</p>
+<p>First, the transport correction ratio, <span class="math notranslate nohighlight">\(\tau_H\)</span> for pure Hydrogen is obtained using a method (potentially the in-scatter approach) suitable for accurate calculations of transport cross sections
+or transport correction factors.</p>
+<p>Then, the pure Hydrogen microscopic cross section can be computed from the out-scatter transport xs and the Hydrogen number density in the pure Hydrogen medium (<span class="math notranslate nohighlight">\(\sigma_{tr,out}^H = \Sigma_{tr,out}^H / N_{inf}^{H}\)</span>)</p>
+<p>Using the number density of Hydrogen in the homogenized fuel assembly, <span class="math notranslate nohighlight">\(N_{FA}^{H}\)</span>, one can then compute the macroscopic transport xs without Hydrogen:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\Sigma_{tr,out}^{FA-H} = \Sigma_{tr,out}^{FA} -  \sigma_{tr,out}^H N_{FA}^{H}\]</div>
+</div></blockquote>
+<p>Then, the “corrected” Hydrogen transport xs can be added using the transport correction factor:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\Sigma_{tr,corrected}^{FA} = \Sigma_{tr,out}^{FA-H} + \sigma_{t}^H N_{FA}^{H} \tau_H\]</div>
+</div></blockquote>
+<p>Essentially, the “bad” out-scattering component from the anisotropic Hydrogen is removed and the “good” in-scattering based transport xs is added.</p>
+</section>
+<section id="b-1-critical-spectrum">
+<h3><span class="math notranslate nohighlight">\(B_1\)</span> Critical Spectrum<a class="headerlink" href="#b-1-critical-spectrum" title="Link to this heading">¶</a></h3>
+<p>The <span class="math notranslate nohighlight">\(B_1\)</span> method is much too lengthy to discuss here. However, its implementation is within <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.CriticalSpectrum" title="diffusion_coeffs.CriticalSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.CriticalSpectrum</span></code></a> and <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.SolveB1" title="diffusion_coeffs.SolveB1"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.SolveB1</span></code></a>.</p>
+</section>
+<section id="p-1-critical-spectrum">
+<h3><span class="math notranslate nohighlight">\(P_1\)</span> Critical Spectrum<a class="headerlink" href="#p-1-critical-spectrum" title="Link to this heading">¶</a></h3>
+<p>The <span class="math notranslate nohighlight">\(P_1\)</span> method is also too lengthy to discuss here. However, its implementation is within <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.CriticalSpectrum" title="diffusion_coeffs.CriticalSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.CriticalSpectrum</span></code></a> and <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.SolveB1" title="diffusion_coeffs.SolveB1"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.SolveB1</span></code></a>. The only difference
+from the <span class="math notranslate nohighlight">\(B_1\)</span> method
+is that the <span class="math notranslate nohighlight">\(\alpha\)</span> terms are replaced by all ones in the <span class="math notranslate nohighlight">\(P_1\)</span> approach.</p>
+</section>
+<section id="cm-critical-spectrum">
+<h3>CM Critical Spectrum<a class="headerlink" href="#cm-critical-spectrum" title="Link to this heading">¶</a></h3>
+<p>The CM critical spectrum approach is that used in CASMO-4E. Essentially, the following fundamental mode equation is solved using “known” fine group transport cross sections:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\Sigma_{tr,g}\phi_g + D_g B^2 \phi_g = \chi_g + \sum_{g'}\Sigma_{s0,g'g}\phi_{g'}\]</div>
+</div></blockquote>
+<p>An iterative methodology similar to the <span class="math notranslate nohighlight">\(B_1\)</span> approach is implemented in which the value of <span class="math notranslate nohighlight">\(B^2\)</span> is iterated on until balance between the left and right sides of the following is achieved:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[( \underline{\underline{\Sigma_t}} + B^2\underline{\underline{D}} -\underline{\underline{\Sigma_{s0,g'g}}})\underline{\phi} = \underline{\chi}\]</div>
+<div class="math notranslate nohighlight">
+\[k = \sum_{g} (\nu \Sigma)_{f,g}\phi_g\]</div>
+</div></blockquote>
+<p>The value of <span class="math notranslate nohighlight">\(k\)</span> is changed as in the <span class="math notranslate nohighlight">\(B_1\)</span> approach.</p>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
+<section id="transport-correction-factor-results">
+<span id="proj3-results"></span><h3>Transport correction factor results<a class="headerlink" href="#transport-correction-factor-results" title="Link to this heading">¶</a></h3>
+<p>The transport correction ratio was computed for all four methods of computing the diffusion coefficient and is shown below for the fuel assembly case. The CMM solution from Serpent is also shown for comparison.</p>
+<p>It is clear that the various methods all produce different transport correction factors - especially in the thermal and epithermal ranges.
+Most methods produce reasonable results in the thermal range - except for the out-scattering method.</p>
+<a class="reference internal image-reference" href="../_images/all_methods.png"><img alt="../_images/all_methods.png" class="align-center" src="../_images/all_methods.png" style="width: 400px;" />
+</a>
+</section>
+<section id="critical-spectrum-results">
+<h3>Critical spectrum results<a class="headerlink" href="#critical-spectrum-results" title="Link to this heading">¶</a></h3>
+<p>The three buckling methods were compared. <span class="math notranslate nohighlight">\(B^2\)</span> values are shown below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>B2 values</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CM</p></td>
+<td><p>0.0002459</p></td>
+</tr>
+<tr class="row-odd"><td><p>B1</p></td>
+<td><p>0.0002549</p></td>
+</tr>
+<tr class="row-even"><td><p>P1</p></td>
+<td><p>0.0002542</p></td>
+</tr>
+</tbody>
+</table>
+<p>Fluxes from each are also plotted below. It is important to note that the flux needed extremely little correction due to the fact that the original problem was already very close to critical.</p>
+<a class="reference internal image-reference" href="../_images/hw3_17_11.png"><img alt="../_images/hw3_17_11.png" class="align-center" src="../_images/hw3_17_11.png" style="width: 400px;" />
+</a>
+</section>
+<section id="diffusion-coefficient-results">
+<h3>Diffusion coefficient results<a class="headerlink" href="#diffusion-coefficient-results" title="Link to this heading">¶</a></h3>
+<p>2g diffusion coefficients were computed using each of the methods discussed above.
+These are shown below and compared to the Serpent CMM diffusion coefficients in terms of percent difference.
+Diffusion coefficients are condensed directly from the fine group diffusion coefficients and fine group fluxes from Serpent.
+In the case of the <span class="math notranslate nohighlight">\(B_1\)</span> and <span class="math notranslate nohighlight">\(P_1\)</span> approaches, fine group diffusion coefficients are computed using the currents from <span class="math notranslate nohighlight">\(B_1\)</span> and <span class="math notranslate nohighlight">\(P_1\)</span> theory and then condensed.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Fast XS (&gt; 0.625 eV)</p></th>
+<th class="head"><p>Thermal XS (&lt; 0.625 eV)</p></th>
+<th class="head"><p>Fast % Diff.</p></th>
+<th class="head"><p>Thermal % Diff.</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Serpent CMM (Diffusion Coeff.)</p></td>
+<td><p>1.758</p></td>
+<td><p>0.8807</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>In-scatter (Diffusion Coeff.)</p></td>
+<td><p>1.699</p></td>
+<td><p>0.8830</p></td>
+<td><p>-3.385</p></td>
+<td><p>0.265</p></td>
+</tr>
+<tr class="row-even"><td><p>Out-scatter (Diffusion Coeff.)</p></td>
+<td><p>1.734</p></td>
+<td><p>0.8263</p></td>
+<td><p>-1.382</p></td>
+<td><p>-6.178</p></td>
+</tr>
+<tr class="row-odd"><td><p>Flux-limited (Diffusion Coeff.)</p></td>
+<td><p>1.682</p></td>
+<td><p>0.8719</p></td>
+<td><p>-4.322</p></td>
+<td><p>-0.995</p></td>
+</tr>
+<tr class="row-even"><td><p>Hydrogen-corrected (Diffusion Coeff.)</p></td>
+<td><p>1.723</p></td>
+<td><p>0.8400</p></td>
+<td><p>-1.994</p></td>
+<td><p>-4.621</p></td>
+</tr>
+<tr class="row-odd"><td><p>CM (Diffusion Coeff.)</p></td>
+<td><p>1.763</p></td>
+<td><p>0.8845</p></td>
+<td><p>0.283</p></td>
+<td><p>0.428</p></td>
+</tr>
+<tr class="row-even"><td><p>B1 (Diffusion Coeff.)</p></td>
+<td><p>1.699</p></td>
+<td><p>0.8829</p></td>
+<td><p>-3.356</p></td>
+<td><p>0.254</p></td>
+</tr>
+<tr class="row-odd"><td><p>P1 (Diffusion Coeff.)</p></td>
+<td><p>1.703</p></td>
+<td><p>0.8833</p></td>
+<td><p>-3.127</p></td>
+<td><p>0.296</p></td>
+</tr>
+<tr class="row-even"><td><p>Serpent B1 (Reduced Abs.)</p></td>
+<td><p>7.7596E-03</p></td>
+<td><p>6.7626E-02</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>CM (Reduced Abs.)</p></td>
+<td><p>7.7612E-03</p></td>
+<td><p>6.7643E-02</p></td>
+<td><p>0.020</p></td>
+<td><p>0.026</p></td>
+</tr>
+<tr class="row-even"><td><p>B1 (Reduced Abs.)</p></td>
+<td><p>7.7618E-03</p></td>
+<td><p>6.7643E-02</p></td>
+<td><p>0.028</p></td>
+<td><p>0.025</p></td>
+</tr>
+<tr class="row-odd"><td><p>P1 (Reduced Abs.)</p></td>
+<td><p>7.7619E-03</p></td>
+<td><p>6.7643E-02</p></td>
+<td><p>0.030</p></td>
+<td><p>0.026</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="summary">
+<span id="proj3-summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>Various methods for obtaining diffusion coefficients were discussed and compared. In-scatter, out-scatter, flux-limited, and Hydrogen-corrected approaches were considered for
+computing the transport correction ratios and coarse-group diffusion coefficients from a fine group dataset.</p>
+<p>Critical spectrum calculations were also performed - <span class="math notranslate nohighlight">\(B_1\)</span>, <span class="math notranslate nohighlight">\(P_1\)</span> and CM approaches were all implemented and compared. Also, the diffusion coefficients computed from each were compared to
+the prior four methods.</p>
+</section>
+<section id="jupyter">
+<span id="proj3-jupyter"></span><h2>Jupyter<a class="headerlink" href="#jupyter" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>A Jupyter notebook is given for the calculations performed <a class="reference internal" href="__notebooks__/project3.html#proj3-notebook"><span class="std std-ref">HERE</span></a></p></li>
+</ul>
+</section>
+<section id="methods-and-classes">
+<span id="proj3-classes"></span><h2>Methods and Classes<a class="headerlink" href="#methods-and-classes" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>In-scattering transport xs method developed in class: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.InScatter" title="diffusion_coeffs.InScatter"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.InScatter</span></code></a></p></li>
+<li><p>Out-scattering transport xs method developed in class: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.OutScatter" title="diffusion_coeffs.OutScatter"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.OutScatter</span></code></a></p></li>
+<li><p>Flux-limited transport xs method developed in class: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.FluxLimited" title="diffusion_coeffs.FluxLimited"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.FluxLimited</span></code></a></p></li>
+<li><p>2g xs condensation function: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.Condense2gr" title="diffusion_coeffs.Condense2gr"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.Condense2gr</span></code></a></p></li>
+<li><p>B1 equation solver: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.SolveB1" title="diffusion_coeffs.SolveB1"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.SolveB1</span></code></a></p></li>
+<li><p>Critical spectrum calculator for <span class="math notranslate nohighlight">\(B_1\)</span> and <span class="math notranslate nohighlight">\(P_1\)</span> methods: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.CriticalSpectrum" title="diffusion_coeffs.CriticalSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.CriticalSpectrum</span></code></a></p></li>
+<li><p>CM critical spectrum method: <a class="reference internal" href="__python_docs__/diffusion_coeffs.html#diffusion_coeffs.CMSpectrum" title="diffusion_coeffs.CMSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffusion_coeffs.CMSpectrum</span></code></a></p></li>
+</ul>
+</div></blockquote>
 </section>
 </section>
 
