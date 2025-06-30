@@ -23,6 +23,11 @@ Projects
    * :ref:`Validation test for Simpsons Rule (Jupyter) <proj2_simpsons_test>`
    * :ref:`Transport Correction Jupyter Notebook <proj2_results_transport>`
    * Transport Correction Module: :class:`transportcorrection`
+* Project 3: Diffusion Coefficients and Critical Spectrum.
+   * :ref:`Project 3 Notebook <proj3_notebook>`
+   * :ref:`Results and Documentation Report <proj3>`
+   * Diffusion Coefficient and Critical Spectrum Module: :class:`diffusion_coeffs`
+
 
 .. toctree::
    :maxdepth: 3
@@ -32,13 +37,17 @@ Projects
    project1.rst
    project2.rst
    project2_sph_harm.rst
+   project3.rst
    __python_docs__/pointsource_sphere
    __python_docs__/transportcorrection
    __python_docs__/sph_harmonics
+   __python_docs__/diffusion_coeffs
    __notebooks__/project1_notebook.rst
    __notebooks__/project2_simpsons_test_notebook.rst
    __notebooks__/project2_q456.rst
    __notebooks__/project2_workshop_spherical_harmonics.rst
+   __notebooks__/project3.rst
+
 
 .. image:: ../fancy_images/buzz_scary.png
 	:align: center

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>diffusion_coeffs module &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="../__notebooks__/project1_notebook.html" />
+    <link rel="prev" title="sph_harmonics module" href="sph_harmonics.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-diffusion_coeffs">
+<span id="diffusion-coeffs-module"></span><h1>diffusion_coeffs module<a class="headerlink" href="#module-diffusion_coeffs" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.CMSpectrum">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">CMSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigMtx0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigTr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuSigF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kinf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.CMSpectrum" title="Link to this definition">¶</a></dt>
+<dd><p>Solves CASMO-4E CM 1 step approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>int</em>) – number energy groups</p></li>
+<li><p><strong>sigMtx0</strong> (<em>2-dim array</em>) – P0 scattering matrix.</p></li>
+<li><p><strong>sigS1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>sigTr</strong> (<em>array</em>) – transport cross section as a function of energy.</p></li>
+<li><p><strong>chi</strong> (<em>array</em>) – neutron fission source spectra.</p></li>
+<li><p><strong>nuSigF</strong> (<em>array</em>) – nu-sigma-fission from serpent.</p></li>
+<li><p><strong>kinf</strong> (<em>float</em>) – kinf term from Serpent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flx</strong> (<em>1-dim array</em>) – flux</p></li>
+<li><p><strong>B2</strong> (<em>float</em>) – buckling</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.Condense2gr">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">Condense2gr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.625</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.Condense2gr" title="Link to this definition">¶</a></dt>
+<dd><p>Condenses a xs into 2 groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xs</strong> (<em>array</em>) – xs values as an array.</p></li>
+<li><p><strong>flx</strong> (<em>array</em>) – exact neutron flux as a function of energy.</p></li>
+<li><p><strong>energy</strong> (<em>array</em>) – energy mesh points.</p></li>
+<li><p><strong>cutoffE</strong> (<em>float</em>) – Cutoff energy for 2g separation (eV).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xs</strong> – 2g cross section after condensing</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.CriticalSpectrum">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">CriticalSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigMtx0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigMtx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuSigF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kinf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.CriticalSpectrum" title="Link to this definition">¶</a></dt>
+<dd><p>Performs B1 or P1 critical spectrum calculation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>int</em>) – number energy groups</p></li>
+<li><p><strong>sigMtx0</strong> (<em>2-dim array</em>) – P0 scattering matrix.</p></li>
+<li><p><strong>sigS1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>sigTr</strong> (<em>array</em>) – transport cross section as a function of energy.</p></li>
+<li><p><strong>chi</strong> (<em>array</em>) – neutron fission source spectra.</p></li>
+<li><p><strong>nuSigF</strong> (<em>array</em>) – nu-sigma-fission from serpent.</p></li>
+<li><p><strong>kinf</strong> (<em>float</em>) – kinf term from Serpent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flx</strong> (<em>1-dim array</em>) – flux</p></li>
+<li><p><strong>iJ</strong> (<em>1-dim array</em>) – current</p></li>
+<li><p><strong>B2</strong> (<em>float</em>) – buckling</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.FluxLimited">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">FluxLimited</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.FluxLimited" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains the transport correction ratio using flux limited approach</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>int</em>) – number energy groups</p></li>
+<li><p><strong>sigS1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>flx</strong> (<em>array</em>) – exact neutron flux as a function of energy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>transportxs</strong> (<em>1-dim array</em>) – transport xs</p></li>
+<li><p><strong>tau</strong> (<em>1-dim array</em>) – transport correction factor</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.InScatter">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">InScatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.InScatter" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains the transport correction ratio using exact in-scatter expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<em>array</em>) – energy mesh points.</p></li>
+<li><p><strong>sigS1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>flx</strong> (<em>array</em>) – exact neutron flux as a function of energy.</p></li>
+<li><p><strong>B2</strong> (<em>float</em>) – Buckling squared term.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>transportxs</strong> (<em>1-dim array</em>) – transport xs</p></li>
+<li><p><strong>tau</strong> (<em>1-dim array</em>) – transport correction factor</p></li>
+<li><p><strong>Jg</strong> (<em>1-dim array</em>) – neutron current from inscattering approach</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.OutScatter">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">OutScatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigS1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.OutScatter" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains the transport correction ratio using out-scatter approximation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>int</em>) – number energy groups</p></li>
+<li><p><strong>sigS1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) as a function of energy.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>transportxs</strong> (<em>1-dim array</em>) – transport xs</p></li>
+<li><p><strong>tau</strong> (<em>1-dim array</em>) – transport correction factor</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffusion_coeffs.SolveB1">
+<span class="sig-prename descclassname"><span class="pre">diffusion_coeffs.</span></span><span class="sig-name descname"><span class="pre">SolveB1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigMtx0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigMtx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#diffusion_coeffs.SolveB1" title="Link to this definition">¶</a></dt>
+<dd><p>B1 approach (solves for flux in B1 method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>int</em>) – energy mesh points.</p></li>
+<li><p><strong>sctMtx0</strong> (<em>2-dim array</em>) – scattering cross section matrix (0th moment) g’g.</p></li>
+<li><p><strong>sctMtx1</strong> (<em>2-dim array</em>) – scattering cross section matrix (1st moment) g’g’.</p></li>
+<li><p><strong>sigT</strong> (<em>array</em>) – total cross section as a function of energy.</p></li>
+<li><p><strong>chi</strong> (<em>array</em>) – fission spectrum.</p></li>
+<li><p><strong>B2</strong> (<em>float</em>) – energy-independent buckling value</p></li>
+<li><p><strong>alpha</strong> (<em>array</em>) – energy-dependent coefficients for the 2nd B1 equation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flx</strong> (<em>1-dim array</em>) – flux</p></li>
+<li><p><strong>iJ</strong> (<em>1-dim array</em>) – current</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="sph_harmonics.html" title="previous chapter">sph_harmonics module</a></li>
+      <li>Next: <a href="../__notebooks__/project1_notebook.html" title="next chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__python_docs__/diffusion_coeffs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

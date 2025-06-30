@@ -6,7 +6,7 @@ Project 2: Transport Correction Ratios
 ======================
 Quick Scrolling
 ======================
-* :ref:`Description <_project2_description>`
+* :ref:`Description <project2_description>`
 * :ref:`Methodology <project2_methods>`
 * :ref:`Results <project2_results>`
 * :ref:`Summary <project2_summary>`

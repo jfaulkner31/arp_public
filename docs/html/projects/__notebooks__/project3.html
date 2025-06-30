@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Homework 3 &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../../glossary.html" />
+    <link rel="prev" title="NRE7203: Advanced Reactor Physics" href="project2_workshop_spherical_harmonics.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="homework-3">
+<span id="proj3-notebook"></span><h1>Homework 3<a class="headerlink" href="#homework-3" title="Link to this heading">¶</a></h1>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import relevant packages</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">serpentTools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">serpentTools.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">rc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plot1d</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffusion_coeffs</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># Default values</span>
+<span class="n">FONT_SIZE</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># font size for plotting purposes</span>
+<span class="c1"># rcParams[&#39;figure.dpi&#39;] = 300</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="c1"># Set default figure size</span>
+</pre></div>
+</div>
+</section>
+<section id="question-1-basic-transport-xs-calculations">
+<h2>Question 1 - basic transport xs calculations<a class="headerlink" href="#question-1-basic-transport-xs-calculations" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define file and read file</span>
+<span class="n">resFile</span> <span class="o">=</span> <span class="s2">&quot;./serpent_HW3/fa2D_70gr_inf_res.m&quot;</span>
+<span class="n">rc</span><span class="p">[</span><span class="s2">&quot;serpentVersion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2.1.32&quot;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SERPENT</span> <span class="n">Serpent</span> <span class="mf">2.2.1</span> <span class="n">found</span> <span class="ow">in</span> <span class="o">./</span><span class="n">serpent_HW3</span><span class="o">/</span><span class="n">fa2D_70gr_inf_res</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">but</span> <span class="n">version</span> <span class="mf">2.1.32</span> <span class="ow">is</span> <span class="n">defined</span> <span class="ow">in</span> <span class="n">settings</span>
+  <span class="n">Attempting</span> <span class="n">to</span> <span class="n">read</span> <span class="n">anyway</span><span class="o">.</span> <span class="n">Please</span> <span class="n">report</span> <span class="n">strange</span> <span class="n">behaviors</span><span class="o">/</span><span class="n">failures</span> <span class="n">to</span> <span class="n">developers</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">sigT</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">infTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># out-scatter</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Inscattering</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">Jg</span> <span class="o">=</span> <span class="n">InScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span> <span class="c1"># get inscatter</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Outscatter</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="n">OutScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Flx Limited</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="n">FluxLimited</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flux Limited Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Inscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.69854949</span> <span class="mf">0.88303605</span><span class="p">]</span>
+<span class="n">Outscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.73376106</span> <span class="mf">0.82629467</span><span class="p">]</span>
+<span class="n">Flux</span> <span class="n">Limited</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.68208348</span> <span class="mf">0.87193724</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="question-2">
+<h3>Question 2<a class="headerlink" href="#question-2" title="Link to this heading">¶</a></h3>
+<section id="step-1-get-sigma-tr-g-h-in-and-tau-h-in">
+<h4>Step 1. Get <span class="math notranslate nohighlight">\(\Sigma_{tr,g}^{H,in}\)</span> and <span class="math notranslate nohighlight">\(\tau_{H,in}\)</span><a class="headerlink" href="#step-1-get-sigma-tr-g-h-in-and-tau-h-in" title="Link to this heading">¶</a></h4>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define file and read file</span>
+<span class="n">resFile</span> <span class="o">=</span> <span class="s2">&quot;./serpent_HW3/infinite_h_basic_h1_r1_res.m&quot;</span>
+<span class="n">rc</span><span class="p">[</span><span class="s2">&quot;serpentVersion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2.1.32&quot;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile</span><span class="p">)</span>
+
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">sigT_H</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">infTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># out-scatter</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c1"># In scattering xs</span>
+<span class="n">transportxs_H_in</span><span class="p">,</span> <span class="n">tau_in</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">InScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT_H</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">)</span>
+<span class="n">transportxs_H_out</span><span class="p">,</span> <span class="n">tau_out</span><span class="o">=</span> <span class="n">OutScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT_H</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="now-get-transport-xs-for-the-fa">
+<h3>Now get transport xs for the FA<a class="headerlink" href="#now-get-transport-xs-for-the-fa" title="Link to this heading">¶</a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now get inscattering and outscattering for fuel assembly</span>
+<span class="n">res_assy</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;serpent_HW3/fa2D_70gr_inf_res.m&#39;</span><span class="p">)</span>
+<span class="n">rc</span><span class="p">[</span><span class="s2">&quot;serpentVersion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2.1.32&quot;</span>
+
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_assy</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">sigT</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_fuel</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">cmm_tau_fuel</span> <span class="o">=</span> <span class="n">cmmTransp_fuel</span> <span class="o">/</span> <span class="n">sigT</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">transportxs_fuel_out</span><span class="p">,</span> <span class="n">tau_fuel_out</span> <span class="o">=</span> <span class="n">OutScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">)</span>
+<span class="n">transportxs_fuel_in</span><span class="p">,</span> <span class="n">tau_fuel_in</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">InScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SERPENT</span> <span class="n">Serpent</span> <span class="mf">2.2.1</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">serpent_HW3</span><span class="o">/</span><span class="n">fa2D_70gr_inf_res</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">but</span> <span class="n">version</span> <span class="mf">2.1.32</span> <span class="ow">is</span> <span class="n">defined</span> <span class="ow">in</span> <span class="n">settings</span>
+  <span class="n">Attempting</span> <span class="n">to</span> <span class="n">read</span> <span class="n">anyway</span><span class="o">.</span> <span class="n">Please</span> <span class="n">report</span> <span class="n">strange</span> <span class="n">behaviors</span><span class="o">/</span><span class="n">failures</span> <span class="n">to</span> <span class="n">developers</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get area of water here.</span>
+<span class="n">area_tot</span> <span class="o">=</span> <span class="mf">21.5</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">area_fuel</span> <span class="o">=</span> <span class="mi">264</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">0.475</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">area_guide</span> <span class="o">=</span> <span class="mi">25</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.6120</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5715</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">area_water</span> <span class="o">=</span> <span class="n">area_tot</span> <span class="o">-</span> <span class="n">area_fuel</span> <span class="o">-</span> <span class="n">area_guide</span>
+
+<span class="c1"># Number density of water in water only simulation</span>
+<span class="n">Na</span> <span class="o">=</span> <span class="mf">6.02214076e23</span>
+<span class="n">Nh_inf</span> <span class="o">=</span> <span class="n">Na</span> <span class="o">*</span> <span class="mf">0.7129</span> <span class="o">/</span> <span class="mf">1.00782503223</span>
+<span class="n">N_water</span> <span class="o">=</span> <span class="p">(</span><span class="n">Na</span> <span class="o">*</span> <span class="mf">0.7</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.00782503223</span><span class="o">*</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="mf">15.999</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># water number density</span>
+<span class="n">Nh_lattice</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">N_water</span><span class="o">*</span> <span class="n">area_water</span><span class="o">/</span><span class="n">area_tot</span> <span class="c1"># Number density of H in  lattice</span>
+
+<span class="c1"># Out-scattering transport xs from hydrogen only simulation -&gt; transportxs_H_out</span>
+<span class="c1"># Out-scattering transport xs from fuel assembly simulation -&gt; transportxs_fuel_out</span>
+<span class="c1"># Transport correction factor from Inscattering on hydrogen -&gt; tau_in</span>
+
+<span class="c1"># Step 1. get micro-xs from inf hydrogen simulation (bullet 2 or step 1)</span>
+<span class="n">micro_transport_H_out</span> <span class="o">=</span> <span class="n">transportxs_H_out</span> <span class="o">/</span> <span class="n">Nh_inf</span>
+
+<span class="c1"># Step 3. equation 7.14</span>
+<span class="n">transport_lattice_without_H</span> <span class="o">=</span> <span class="n">transportxs_fuel_out</span> <span class="o">-</span> <span class="n">micro_transport_H_out</span><span class="o">*</span><span class="n">Nh_lattice</span>
+
+<span class="c1"># Step 4. Use in-scattering tau to correct total xs for hydrogen to get transport corrected hydrogen</span>
+<span class="n">transport_hydrogen_only_corrected</span> <span class="o">=</span> <span class="n">sigT_H</span> <span class="o">/</span> <span class="n">Nh_inf</span> <span class="o">*</span> <span class="n">Nh_lattice</span> <span class="o">*</span> <span class="n">tau_in</span>
+
+<span class="c1"># Step 5. Hydrogen correction Equation 7.16</span>
+<span class="n">transport_corrected_via_hydrogen</span> <span class="o">=</span> <span class="n">transport_lattice_without_H</span> <span class="o">+</span> <span class="n">transport_hydrogen_only_corrected</span>
+
+<span class="c1"># Final - get diffusion coeff. by collapsing</span>
+<span class="n">hydrogen_corrected_diff_2g</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="o">/</span><span class="n">transport_corrected_via_hydrogen</span><span class="p">,</span> <span class="n">flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hydrogen correction diffusion coeff. =&quot;</span><span class="p">,</span> <span class="n">hydrogen_corrected_diff_2g</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Hydrogen</span> <span class="n">correction</span> <span class="n">diffusion</span> <span class="n">coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.72253227</span> <span class="mf">0.8400543</span> <span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="c1"># Plot1d(energy, tau_in, xlabel=&quot;Energy, eV&quot;, ylabel=&#39;&#39;,</span>
+<span class="c1">#         fontsize=16, marker=&quot;-k&quot;, markerfill=False, markersize=6)</span>
+<span class="c1"># Plot1d(energy, tau_out, xlabel=&quot;Energy, eV&quot;, ylabel=&#39;&#39;,</span>
+<span class="c1">#         fontsize=16, marker=&quot;-r&quot;, markerfill=False, markersize=6)</span>
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">tau_fuel_out</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">tau_fuel_in</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="c1"># Plot1d(energy, cmm_tau_fuel, xlabel=&quot;Energy, eV&quot;, ylabel=&#39;&#39;,</span>
+<span class="c1">#         fontsize=16, marker=&quot;r-&quot;, markerfill=False, markersize=6)</span>
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">transport_corrected_via_hydrogen</span><span class="o">/</span><span class="n">sigT</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;k-&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;Fuel out-scatter&#39;</span><span class="p">,</span> <span class="s1">&#39;Fuel in-scatter&#39;</span><span class="p">,</span><span class="s1">&#39;H corrected&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mf">0.55</span><span class="p">,</span><span class="mf">1.1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/hw3_13_0.png" src="../../_images/hw3_13_0.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot tau from inscattering and outscattering hydrogen corrections</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">tau_in</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">tau_out</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/hw3_14_0.png" src="../../_images/hw3_14_0.png" />
+</section>
+</section>
+</section>
+<section id="question-5-getting-cm-transport-xs-and-diffusion-coefficients-with-cm-method-implementation">
+<h1>Question 5: Getting CM transport xs and diffusion coefficients with CM method implementation<a class="headerlink" href="#question-5-getting-cm-transport-xs-and-diffusion-coefficients-with-cm-method-implementation" title="Link to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define file and read file</span>
+<span class="n">resFile</span> <span class="o">=</span> <span class="s2">&quot;./serpent_HW3/fa2D_70gr_inf_res.m&quot;</span>
+<span class="n">rc</span><span class="p">[</span><span class="s2">&quot;serpentVersion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2.1.32&quot;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile</span><span class="p">)</span>
+
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>  <span class="c1"># number of energy groups</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">sigT</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># represents in-scatter (cumulative migration method)</span>
+<span class="n">infTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># out-scatter ()</span>
+
+<span class="n">infinite_flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">infinite_flx</span> <span class="o">=</span> <span class="n">infinite_flx</span><span class="o">/</span><span class="n">infinite_flx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">rabsxs</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infRabsxs&#39;</span><span class="p">]</span>
+<span class="n">nusigF</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infNsf&#39;</span><span class="p">]</span>
+<span class="n">chi</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infChit&#39;</span><span class="p">]</span>
+<span class="n">SP0</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp0&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">kinf</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">resdata</span><span class="p">[</span><span class="s1">&#39;absKeff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># k-in</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP0</span><span class="o">=</span><span class="n">SP0</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c1"># Get the CM flux and b2</span>
+<span class="n">cm_flx</span><span class="p">,</span> <span class="n">b2_cm</span> <span class="o">=</span> <span class="n">CMSpectrum</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="n">ng</span><span class="p">,</span> <span class="n">sigMtx0</span><span class="o">=</span><span class="n">SP0</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">sigTr</span><span class="o">=</span><span class="n">cmmTransp</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="n">chi</span><span class="p">,</span> <span class="n">nuSigF</span><span class="o">=</span><span class="n">nusigF</span><span class="p">,</span> <span class="n">kinf</span><span class="o">=</span><span class="n">kinf</span><span class="p">)</span>
+<span class="n">b1_flux</span><span class="p">,</span> <span class="n">b1_ij</span><span class="p">,</span> <span class="n">b2_b1</span> <span class="o">=</span> <span class="n">CriticalSpectrum</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span> <span class="n">SP0</span><span class="p">,</span> <span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">nusigF</span><span class="p">,</span> <span class="n">kinf</span><span class="p">)</span>
+<span class="n">p1_flux</span><span class="p">,</span> <span class="n">p1_ij</span><span class="p">,</span> <span class="n">b2_p1</span> <span class="o">=</span> <span class="n">CriticalSpectrum</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span> <span class="n">SP0</span><span class="p">,</span> <span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">nusigF</span><span class="p">,</span> <span class="n">kinf</span><span class="p">,</span> <span class="n">P1</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CM B2 =&quot;</span><span class="p">,</span> <span class="n">b2_cm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B1 B2 =&quot;</span><span class="p">,</span> <span class="n">b2_b1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P1 B2 =&quot;</span><span class="p">,</span> <span class="n">b2_p1</span><span class="p">)</span>
+
+<span class="c1"># Get diff coeffs for b1 and p1</span>
+<span class="n">b1_Dg_fine</span> <span class="o">=</span> <span class="n">b1_ij</span> <span class="o">/</span> <span class="p">(</span><span class="n">b2_b1</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">b1_flux</span><span class="p">)</span>
+<span class="n">p1_Dg_fine</span> <span class="o">=</span> <span class="n">p1_ij</span> <span class="o">/</span> <span class="p">(</span><span class="n">b2_p1</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">p1_flux</span><span class="p">)</span>
+
+<span class="c1"># Condense to two groups with new fluxes:</span>
+<span class="n">b1_Rabsxs_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">rabsxs</span><span class="p">,</span> <span class="n">b1_flux</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+<span class="n">b1_Diff_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">b1_Dg_fine</span><span class="p">,</span> <span class="n">b1_flux</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+
+<span class="n">p1_Rabsxs_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">rabsxs</span><span class="p">,</span> <span class="n">p1_flux</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+<span class="n">p1_Diff_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">p1_Dg_fine</span><span class="p">,</span> <span class="n">p1_flux</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+
+<span class="n">cm_Rabsxs_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">rabsxs</span><span class="p">,</span> <span class="n">cm_flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+<span class="n">cm_Diff_2gr</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="o">/</span><span class="n">cmmTransp</span><span class="p">,</span> <span class="n">cm_flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">cutoffE</span><span class="o">=</span><span class="mf">0.625</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B1 diff =&quot;</span><span class="p">,</span> <span class="n">b1_Diff_2gr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P1 diff =&quot;</span><span class="p">,</span> <span class="n">p1_Diff_2gr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CM diff =&quot;</span><span class="p">,</span> <span class="n">cm_Diff_2gr</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B1 RABS =&quot;</span><span class="p">,</span> <span class="n">b1_Rabsxs_2gr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P1 RABS =&quot;</span><span class="p">,</span> <span class="n">p1_Rabsxs_2gr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CM RABS =&quot;</span><span class="p">,</span> <span class="n">cm_Rabsxs_2gr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SERPENT</span> <span class="n">Serpent</span> <span class="mf">2.2.1</span> <span class="n">found</span> <span class="ow">in</span> <span class="o">./</span><span class="n">serpent_HW3</span><span class="o">/</span><span class="n">fa2D_70gr_inf_res</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">but</span> <span class="n">version</span> <span class="mf">2.1.32</span> <span class="ow">is</span> <span class="n">defined</span> <span class="ow">in</span> <span class="n">settings</span>
+  <span class="n">Attempting</span> <span class="n">to</span> <span class="n">read</span> <span class="n">anyway</span><span class="o">.</span> <span class="n">Please</span> <span class="n">report</span> <span class="n">strange</span> <span class="n">behaviors</span><span class="o">/</span><span class="n">failures</span> <span class="n">to</span> <span class="n">developers</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iterating</span> <span class="mi">0</span>
+<span class="n">iterating</span> <span class="mi">1</span>
+<span class="n">iterating</span> <span class="mi">2</span>
+<span class="n">iterating</span> <span class="mi">3</span>
+<span class="n">iterating</span> <span class="mi">4</span>
+<span class="n">B2</span> <span class="o">=</span>  <span class="mf">0.00024591434041290686</span>
+
+<span class="n">CM</span> <span class="n">B2</span> <span class="o">=</span> <span class="mf">0.00024591434041290686</span>
+<span class="n">B1</span> <span class="n">B2</span> <span class="o">=</span> <span class="mf">0.0002548806438124604</span>
+<span class="n">P1</span> <span class="n">B2</span> <span class="o">=</span> <span class="mf">0.00025428519192265304</span>
+
+<span class="n">B1</span> <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.69905265</span> <span class="mf">0.88293977</span><span class="p">]</span>
+<span class="n">P1</span> <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.70307681</span> <span class="mf">0.88330774</span><span class="p">]</span>
+<span class="n">CM</span> <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.76303046</span> <span class="mf">0.88447132</span><span class="p">]</span>
+<span class="n">B1</span> <span class="n">RABS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.00776182</span> <span class="mf">0.06764274</span><span class="p">]</span>
+<span class="n">P1</span> <span class="n">RABS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.00776193</span> <span class="mf">0.06764278</span><span class="p">]</span>
+<span class="n">CM</span> <span class="n">RABS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.00776121</span> <span class="mf">0.0676434</span> <span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="c1"># Plot1d(energy, infinite_flx, xlabel=&quot;Energy, eV&quot;, ylabel=&#39;&#39;,</span>
+<span class="c1">#         fontsize=16, marker=&quot;-k&quot;, markerfill=False, markersize=6)</span>
+
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">cm_flx</span><span class="o">/</span><span class="n">cm_flx</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">6.5</span><span class="p">)</span>
+
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">b1_flux</span><span class="o">/</span><span class="n">b1_flux</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;-.b&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">Plot1d</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">p1_flux</span><span class="o">/</span><span class="n">p1_flux</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy, eV&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;--k&quot;</span><span class="p">,</span> <span class="n">markerfill</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;CM&#39;</span><span class="p">,</span> <span class="s2">&quot;B1&quot;</span><span class="p">,</span> <span class="s2">&quot;P1&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f62ec0ca7b0</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../../_images/hw3_17_1.png" src="../../_images/hw3_17_1.png" />
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="project2_workshop_spherical_harmonics.html" title="previous chapter">NRE7203: Advanced Reactor Physics</a></li>
+      <li>Next: <a href="../../glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__notebooks__/project3.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
