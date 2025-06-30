@@ -56,7 +56,7 @@ The out-scatter approach is much simpler. It can be written as:
 -------------
 Flux-Limited
 -------------
-The flux limited approach is similar to the in-scatter approach except the neutron current, which is usually unknown, is replaced by the neutron flux.
+The flux-limited approach is similar to the in-scatter approach except the neutron current, which is usually unknown, is replaced by the neutron flux.
 The idea is to replace the neutron current by the known neutron flux spectra.
 
 		.. math::
@@ -64,6 +64,22 @@ The idea is to replace the neutron current by the known neutron flux spectra.
 
 		.. math::
 			D_g = \frac{1}{3\Sigma_{tr,g}}
+
+-------------------
+Hydrogen-Corrected
+-------------------
+The Hydrogen-corrected approach considers most of the anisotropy to belong to the moderator (which is generally true for LWR's).
+Two calculations are normally run - a medium of pure moderating material (pure Hydrogen) and a typical fuel assembly (FA).
+
+The approach subtracts the "bad" out-scattering based component of the homogenized transport xs and then adds a "good" in-scatter based xs.
+
+First, the transport correction ratio, :math:`\tau_H` for pure Hydrogen is obtained using a method (potentially the in-scatter approach) suitable for accurate calculations of transport cross sections
+or transport correction factors.
+
+Then, the pure Hydrogen microscopic cross section can be computed from the out-scatter transport xs and the Hydrogen number density in the pure Hydrogen medium (:math:`\sigma_{tr}^H = \Sigma_{tr}^H / N_{inf}^{H}`)
+
+
+
 
 .. _proj3_results:
 
