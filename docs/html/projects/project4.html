@@ -61,6 +61,65 @@ while also introducing the extension of the in-class implemented done as part of
 <li><p>Implementation for calculating transverse leakages in the y-direction.</p></li>
 <li><p>Implementation of analytical integrals in lieu of using the Python symbolic toolbox.</p></li>
 </ol>
+<section id="transverse-y-leakages">
+<h3>Transverse y leakages<a class="headerlink" href="#transverse-y-leakages" title="Link to this heading">¶</a></h3>
+<p>Transverse leakages in the y direction are implemented by essentially swapping the north/south directions with the
+east/west directions in certain sections of the code - and vice versa. The following shows this implementation within <a class="reference internal" href="__python_docs__/nem.html#nem.CartesianNem1D.TransverseLeakageCoef" title="nem.CartesianNem1D.TransverseLeakageCoef"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.CartesianNem1D.TransverseLeakageCoef</span></code></a>.
+A direction attribute has also been added to change direction based on the user definition.
+Other parts of the code have been modified as necessary but are not shown here for brevity.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># When we are solving in the y direction</span>
+<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+    <span class="n">trL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trL</span>
+    <span class="n">dxi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>   <span class="c1"># delta x in node i</span>
+    <span class="n">Lyi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>  <span class="c1"># y-dir TL eq.(9.19) (north minus south)</span>
+
+
+    <span class="n">g</span> <span class="o">=</span> <span class="p">(</span><span class="n">dxi</span> <span class="o">+</span> <span class="n">trL</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span> <span class="o">+</span> <span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">])</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">g</span> <span class="c1"># inverse of g above</span>
+
+    <span class="c1"># calculate the coefficients (eq.9.19)</span>
+    <span class="n">coefl0</span> <span class="o">=</span> <span class="n">Lyi</span>
+    <span class="n">coefl1</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="n">dxi</span><span class="o">*</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">Lyi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">])</span><span class="o">+</span>
+        <span class="p">(</span><span class="n">Lyi</span><span class="o">-</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">])</span> <span class="p">)</span>
+    <span class="n">coefl2</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">Lyi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">])</span><span class="o">+</span><span class="p">(</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">Lyi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">dxi</span><span class="o">+</span><span class="n">trL</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="c1"># left term in (eq.9.11)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">trlcoef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">coefl0</span><span class="p">,</span> <span class="n">coefl1</span><span class="p">,</span> <span class="n">coefl2</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+</pre></div>
+</div>
+</section>
+<section id="analytical-integrals">
+<h3>Analytical Integrals<a class="headerlink" href="#analytical-integrals" title="Link to this heading">¶</a></h3>
+<p>The NEM was originally implemented using Pythons symbolic toolbox. This toolbox is very useful for the rapid evaluation of integrals and derivatives.
+However, the constant evaluation of integrals and derivatives is quite slow. Therefore, it was determined that analytical evaluations of all integrals and
+derivatives used within the NEM could potentially provide a great deal of speedup. Since the original implementation was mostly generalized, the analytical
+implementation was also made to be generalized.</p>
+<p>Thus, we made convenient use of Python’s lambda functions to manually input the necessary basis functions and the integrals and derivatives that were necessary
+to evaluate. Lambda functions allow for generality and also allow one to dump relatively simple functions within aleady existing data structures that were
+previously used to store the symbolic representation of the integrals, derivatives, and basis functions.</p>
+<p>An example is shown below for the implementation of the variable hpp:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_hSecondDerivatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;2nd derivative for all the expansion functions&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">hpp</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">hIdx</span><span class="p">,</span> <span class="n">hFunc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hpp</span><span class="p">[</span><span class="n">hIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hFunc</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hpp</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">3.0</span><span class="o">/</span><span class="n">L</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">6</span><span class="o">*</span><span class="n">x</span> <span class="o">/</span> <span class="n">L</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">12</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">L</span><span class="o">**</span><span class="mi">4</span> <span class="o">-</span> <span class="mf">0.60</span> <span class="o">/</span> <span class="n">L</span><span class="o">**</span><span class="mi">2</span>
+        <span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">hpp</span> <span class="o">=</span> <span class="n">hpp</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="results">
 <span id="project4-results"></span><h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>

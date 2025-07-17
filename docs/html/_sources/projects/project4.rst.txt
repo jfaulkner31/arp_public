@@ -36,6 +36,72 @@ The changes in methodology to the normal nodal expansion method consists of two 
 1. Implementation for calculating transverse leakages in the y-direction.
 2. Implementation of analytical integrals in lieu of using the Python symbolic toolbox.
 
+---------------------
+Transverse y leakages
+---------------------
+
+Transverse leakages in the y direction are implemented by essentially swapping the north/south directions with the
+east/west directions in certain sections of the code - and vice versa. The following shows this implementation within :class:`nem.CartesianNem1D.TransverseLeakageCoef`.
+A direction attribute has also been added to change direction based on the user definition.
+Other parts of the code have been modified as necessary but are not shown here for brevity.
+
+.. code::
+
+        # When we are solving in the y direction
+        elif self.direction == 'y':
+            trL = self.trL
+            dxi = self.dy   # delta x in node i
+            Lyi = self.bc['eJnet']-self.bc['wJnet']  # y-dir TL eq.(9.19) (north minus south)
+
+
+            g = (dxi + trL['ndy'])*(dxi+trL['sdy'])*(dxi + trL['sdy']+trL['ndy'])
+            g = 1/g # inverse of g above
+
+            # calculate the coefficients (eq.9.19)
+            coefl0 = Lyi
+            coefl1 = g*dxi*(
+                (trL['nL']-Lyi)*(dxi+2*trL['sdy'])*(dxi+trL['sdy'])+
+                (Lyi-trL['sL'])*(dxi+2*trL['ndy'])*(dxi+trL['ndy']) )
+            coefl2 = g*(dxi**2)*(
+                (trL['nL']-Lyi)*(dxi+trL['sdy'])+(trL['sL']-Lyi)*(dxi+trL['ndy'])
+                )
+
+            # left term in (eq.9.11)
+            self.trlcoef = np.array([coefl0, coefl1, coefl2]) / self.dx
+
+---------------------
+Analytical Integrals
+---------------------
+
+The NEM was originally implemented using Pythons symbolic toolbox. This toolbox is very useful for the rapid evaluation of integrals and derivatives.
+However, the constant evaluation of integrals and derivatives is quite slow. Therefore, it was determined that analytical evaluations of all integrals and
+derivatives used within the NEM could potentially provide a great deal of speedup. Since the original implementation was mostly generalized, the analytical
+implementation was also made to be generalized.
+
+Thus, we made convenient use of Python's lambda functions to manually input the necessary basis functions and the integrals and derivatives that were necessary
+to evaluate. Lambda functions allow for generality and also allow one to dump relatively simple functions within aleady existing data structures that were
+previously used to store the symbolic representation of the integrals, derivatives, and basis functions.
+
+An example is shown below for the implementation of the variable hpp:
+
+.. code::
+
+    def _hSecondDerivatives(self, L=0):
+        """2nd derivative for all the expansion functions"""
+        if self.symbolic:
+            x = self.x
+            hpp = {}
+            for hIdx, hFunc in self.h.items():
+                hpp[hIdx] = sym.diff(hFunc, x, 2)
+        else:
+            hpp = {
+                0: lambda x: 0,
+                1: lambda x: 0,
+                2: lambda x: 3.0/L**2 * 2,
+                3: lambda x: 6*x / L**3,
+                4: lambda x: 12*x**2 / L**4 - 0.60 / L**2
+            }
+        self.hpp = hpp
 
 .. _project4_results:
 
