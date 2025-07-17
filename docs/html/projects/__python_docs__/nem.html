@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>nem module &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="../__notebooks__/project1_notebook.html" />
+    <link rel="prev" title="diffusion_coeffs module" href="diffusion_coeffs.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-nem">
+<span id="nem-module"></span><h1>nem module<a class="headerlink" href="#module-nem" title="Link to this heading">¶</a></h1>
+<p>NEM.py</p>
+<dl class="simple">
+<dt>Use of Nodal Expansion Method (NEM) to expand the flux using known:</dt><dd><ol class="arabic simple">
+<li><p>Average flux,</p></li>
+<li><p>Net currents</p></li>
+<li><p>Conservation of the 1st and 2nd moments</p></li>
+</ol>
+</dd>
+</dl>
+<p>The solution is obtained in 1-dim.</p>
+<p>Created on Sun June 29 18:00:00 2025 &#64;author: Dan Kotlyar
+Last updated on Mon July 07 17:00:00 2025 &#64;author: Dan Kotlyar</p>
+<p>email: <a class="reference external" href="mailto:dan&#46;kotlyar&#37;&#52;&#48;me&#46;gatech&#46;edu">dan<span>&#46;</span>kotlyar<span>&#64;</span>me<span>&#46;</span>gatech<span>&#46;</span>edu</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="nem.CartesianNem1D">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nem.</span></span><span class="sig-name descname"><span class="pre">CartesianNem1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbolic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Computes the expansion coefficients for all energy groups</p>
+<p>This function allows to calculate the expansion coefficients for
+the PARCS based expanded form
+e.g., phi(u) = a0+a1*h1(u/a)+…+a4*h4(u/a)</p>
+<p>The transverse leakage source term relies on the following relation:
+L(u) = l0+l1*h1(u/a)+l2*h2(u/a) where, u = x,y, or z</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> (<em>float</em>) – the length of the node in cm</p></li>
+<li><p><strong>xs</strong> (<em>dict</em>) – includes the following keys and corresponding group values:
+nsfxs : group-wise fission production (nu*SigF) in 1/cm [1, …, G] where 1 is the fast group
+chi : fission spectrum
+diffxs : diffusion coefficient in cm
+remxs : removal cross section (rabs+out-of-group scattering) in 1/cm
+spmtx : group-to-group scattering production in 1/cm.
+keff : eigenvalue of the entire problem
+ng : number of energy groups</p></li>
+<li><p><strong>bc</strong> (<em>dict</em>) – includes the following keys and corresponding group values:
+avFlux : nodal average flux in n/cm^2/s
+wJnet : surface mean net current on the left boundary in n/cm^2/s
+eJnet : surface mean net current on the right boundary in n/cm^2/s
+nJnet : surface mean net current on the upper boundary in n/cm^2/s
+sJnet : surface mean net current on the bottom boundary in n/cm^2/s
+wFlux : surface het flux on the left boundary in n/cm^2/s
+eFlux : surface het flux on the right boundary in n/cm^2/s</p></li>
+<li><p><strong>trLeakage</strong> (<em>dict</em>) – eL : transverse leakage in y-direction (right neighbor)
+wL : transverse leakage in y-direction (left neighbor)
+nL : transverse leakage in the x-direction (upper neighbor)
+sL : transverse leakage in the x-direction (lower neighbor)
+eD : diffusion coefficient (right neighbor)
+wD : diffusion coefficient (left neighbor)
+nD : diffusion coefficient (upper neighbor)
+sD : diffusion coefficient (lower neighbor)
+edx : x-dim of the right node
+wdx : x-dim of the left node
+ndx :
+sdx :</p></li>
+<li><p><strong>direction</strong> (<em>str</em>) – solution direction - either ‘x’ or ‘y’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.westHomFlux">
+<span class="sig-name descname"><span class="pre">westHomFlux</span></span><a class="headerlink" href="#nem.CartesianNem1D.westHomFlux" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise flux on the left boundary in n/cm^2/s</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.eastHomFlux">
+<span class="sig-name descname"><span class="pre">eastHomFlux</span></span><a class="headerlink" href="#nem.CartesianNem1D.eastHomFlux" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise flux on the right boundary in n/cm^2/s</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.westDFs">
+<span class="sig-name descname"><span class="pre">westDFs</span></span><a class="headerlink" href="#nem.CartesianNem1D.westDFs" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise DFs on the left boundary in n/cm^2/s</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.eastDFs">
+<span class="sig-name descname"><span class="pre">eastDFs</span></span><a class="headerlink" href="#nem.CartesianNem1D.eastDFs" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise DFs on the right boundary in n/cm^2/s</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.nemcoef">
+<span class="sig-name descname"><span class="pre">nemcoef</span></span><a class="headerlink" href="#nem.CartesianNem1D.nemcoef" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise NEM coefficients: c0, c1, c2, c3, c4</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.coefl0">
+<span class="sig-name descname"><span class="pre">coefl0</span></span><a class="headerlink" href="#nem.CartesianNem1D.coefl0" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise transverse leakages coefficients lg,0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.coefl1">
+<span class="sig-name descname"><span class="pre">coefl1</span></span><a class="headerlink" href="#nem.CartesianNem1D.coefl1" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise transverse leakages coefficients lg,1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.coefl2">
+<span class="sig-name descname"><span class="pre">coefl2</span></span><a class="headerlink" href="#nem.CartesianNem1D.coefl2" title="Link to this definition">¶</a></dt>
+<dd><p>group-wise transverse leakages coefficients lg,2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1-dim array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">GetExpansionCoeffs</span> <span class="pre">:</span> <span class="pre">Get</span> <span class="pre">the</span> <span class="pre">NEM</span> <span class="pre">expansion</span> <span class="pre">coefficients</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">GetHomogFlux</span> <span class="pre">:</span> <span class="pre">Get</span> <span class="pre">the</span> <span class="pre">homogeneous</span> <span class="pre">flux</span> <span class="pre">as</span> <span class="pre">a</span> <span class="pre">function</span> <span class="pre">of</span> <span class="pre">x-values</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.GetExpansionCoeffs">
+<span class="sig-name descname"><span class="pre">GetExpansionCoeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D.GetExpansionCoeffs" title="Link to this definition">¶</a></dt>
+<dd><p>obtain the expansion coefficients</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.GetHomogFlux">
+<span class="sig-name descname"><span class="pre">GetHomogFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D.GetHomogFlux" title="Link to this definition">¶</a></dt>
+<dd><p>calculate the homosgeneous flux</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.GetTrVals">
+<span class="sig-name descname"><span class="pre">GetTrVals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D.GetTrVals" title="Link to this definition">¶</a></dt>
+<dd><p>calculate the transverse leakages values within the node</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D.TransverseLeakageCoef">
+<span class="sig-name descname"><span class="pre">TransverseLeakageCoef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D.TransverseLeakageCoef" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate transverse leakage coefficients</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._ConsrevEqs">
+<span class="sig-name descname"><span class="pre">_ConsrevEqs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">htype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grMultp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._ConsrevEqs" title="Link to this definition">¶</a></dt>
+<dd><p>Arbitrary conservation equations evaluated for specific x</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._Fiss">
+<span class="sig-name descname"><span class="pre">_Fiss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FM</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._Fiss" title="Link to this definition">¶</a></dt>
+<dd><p>fission source for a specific moment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._InScat">
+<span class="sig-name descname"><span class="pre">_InScat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FM</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._InScat" title="Link to this definition">¶</a></dt>
+<dd><p>scatter source term for a specific moment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._Remv">
+<span class="sig-name descname"><span class="pre">_Remv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FM</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._Remv" title="Link to this definition">¶</a></dt>
+<dd><p>removal reaction rates for a specific moment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._TrLeakage">
+<span class="sig-name descname"><span class="pre">_TrLeakage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FM</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._TrLeakage" title="Link to this definition">¶</a></dt>
+<dd><p>transverse leakage for a specific moment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._basisFunctions">
+<span class="sig-name descname"><span class="pre">_basisFunctions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._basisFunctions" title="Link to this definition">¶</a></dt>
+<dd><p>Set the functions and coefficients</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hFirstDerivatives">
+<span class="sig-name descname"><span class="pre">_hFirstDerivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hFirstDerivatives" title="Link to this definition">¶</a></dt>
+<dd><p>1st derivative for all the expansion functions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hIntegrate">
+<span class="sig-name descname"><span class="pre">_hIntegrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hIntegrate" title="Link to this definition">¶</a></dt>
+<dd><p>integration over all the expansion functions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hSecondDerivatives">
+<span class="sig-name descname"><span class="pre">_hSecondDerivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hSecondDerivatives" title="Link to this definition">¶</a></dt>
+<dd><p>2nd derivative for all the expansion functions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hh1Integrate">
+<span class="sig-name descname"><span class="pre">_hh1Integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hh1Integrate" title="Link to this definition">¶</a></dt>
+<dd><p>integrate over hi(x)*h1(x)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hh2Integrate">
+<span class="sig-name descname"><span class="pre">_hh2Integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hh2Integrate" title="Link to this definition">¶</a></dt>
+<dd><p>integrate over hi(x)*h2(x)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hpph1Integrate">
+<span class="sig-name descname"><span class="pre">_hpph1Integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hpph1Integrate" title="Link to this definition">¶</a></dt>
+<dd><p>integrate over hi’’(x)*h1(x)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nem.CartesianNem1D._hpph2Integrate">
+<span class="sig-name descname"><span class="pre">_hpph2Integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.CartesianNem1D._hpph2Integrate" title="Link to this definition">¶</a></dt>
+<dd><p>integrate over hi’’(x)*h2(x)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nem.GetSerpentRes">
+<span class="sig-prename descclassname"><span class="pre">nem.</span></span><span class="sig-name descname"><span class="pre">GetSerpentRes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">univ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeDays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.GetSerpentRes" title="Link to this definition">¶</a></dt>
+<dd><p>Get cross sections and surface data generated by Serpent</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nem.Plot1d">
+<span class="sig-prename descclassname"><span class="pre">nem.</span></span><span class="sig-name descname"><span class="pre">Plot1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'--*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.Plot1d" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the 1D solution</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nem.Plot2d">
+<span class="sig-prename descclassname"><span class="pre">nem.</span></span><span class="sig-name descname"><span class="pre">Plot2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yvals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nem.Plot2d" title="Link to this definition">¶</a></dt>
+<dd><p>Plots a 2D colormap of the soln.</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="diffusion_coeffs.html" title="previous chapter">diffusion_coeffs module</a></li>
+      <li>Next: <a href="../__notebooks__/project1_notebook.html" title="next chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__python_docs__/nem.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

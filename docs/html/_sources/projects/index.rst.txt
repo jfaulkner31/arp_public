@@ -27,6 +27,10 @@ Projects
    * :ref:`Project 3 Notebook <proj3_notebook>`
    * :ref:`Results and Documentation Report <proj3>`
    * Diffusion Coefficient and Critical Spectrum Module: :class:`diffusion_coeffs`
+* Project 4: Nodal Expansion Method
+   * :ref:`Results and Documentation Report<proj4>`
+   * :ref:`Project 4 Notebook <proj4_notebook>`
+   * NEM Module :class:`nem`
 
 
 .. toctree::
@@ -38,15 +42,20 @@ Projects
    project2.rst
    project2_sph_harm.rst
    project3.rst
+   project4.rst
+
    __python_docs__/pointsource_sphere
    __python_docs__/transportcorrection
    __python_docs__/sph_harmonics
    __python_docs__/diffusion_coeffs
+   __python_docs__/nem
+
    __notebooks__/project1_notebook.rst
    __notebooks__/project2_simpsons_test_notebook.rst
    __notebooks__/project2_q456.rst
    __notebooks__/project2_workshop_spherical_harmonics.rst
    __notebooks__/project3.rst
+   __notebooks__/project4_notebook.rst
 
 
 .. image:: ../fancy_images/buzz_scary.png
