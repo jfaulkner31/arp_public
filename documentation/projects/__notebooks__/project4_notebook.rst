@@ -932,6 +932,7 @@ We have added a boolean to the input “symbolic=” to the input to indicate wh
             "SYMBOLIC:", nem_f12_sym.hpph2int[this].subs(nem_f12_sym.x, dx),
             "ANALYTICAL:", (nem_f12_any.hpph2int[this](dx)))
 
+.. _analytical_results_p4:
 
 .. parsed-literal::
 

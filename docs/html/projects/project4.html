@@ -100,7 +100,7 @@ implementation was also made to be generalized.</p>
 <p>Thus, we made convenient use of Python’s lambda functions to manually input the necessary basis functions and the integrals and derivatives that were necessary
 to evaluate. Lambda functions allow for generality and also allow one to dump relatively simple functions within aleady existing data structures that were
 previously used to store the symbolic representation of the integrals, derivatives, and basis functions.</p>
-<p>An example is shown below for the implementation of the variable hpp:</p>
+<p>An example is shown below for the implementation of the variable hpp.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_hSecondDerivatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;2nd derivative for all the expansion functions&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
@@ -119,10 +119,26 @@ previously used to store the symbolic representation of the integrals, derivativ
     <span class="bp">self</span><span class="o">.</span><span class="n">hpp</span> <span class="o">=</span> <span class="n">hpp</span>
 </pre></div>
 </div>
+<p>To properly use the new implementation, in if statement was also added to <a class="reference internal" href="__python_docs__/nem.html#nem.CartesianNem1D._ConsrevEqs" title="nem.CartesianNem1D._ConsrevEqs"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.CartesianNem1D._ConsrevEqs</span></code></a> when accessing the symbolic or analytical representation of the basis functions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ng</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">hIdx</span><span class="p">,</span> <span class="n">hFunc</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="c1"># Symbolic expression --- evaluate using xval</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+          <span class="n">eqs</span><span class="p">[</span><span class="n">ig</span><span class="p">,</span> <span class="n">ig</span><span class="o">*</span><span class="n">nc</span><span class="o">+</span><span class="n">hIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">grMultp</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span><span class="o">*</span><span class="n">hFunc</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">xval</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Manually entered expressions --- just call the lambda function using xval.</span>
+          <span class="n">eqs</span><span class="p">[</span><span class="n">ig</span><span class="p">,</span> <span class="n">ig</span><span class="o">*</span><span class="n">nc</span><span class="o">+</span><span class="n">hIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">grMultp</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span><span class="o">*</span><span class="n">hFunc</span><span class="p">(</span><span class="n">xval</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When evaluating a given function, the lambda function is simply called in lieu of using the symbolic representation.</p>
 </section>
 </section>
 <section id="results">
 <span id="project4-results"></span><h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
+<section id="id1">
+<h3>Analytical Integrals<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>To test the analytical integrals, a quick jupyter notebook function was written <a class="reference internal" href="__notebooks__/project4_notebook.html#analytical-results-p4"><span class="std std-ref">HERE</span></a></p>
+</section>
 </section>
 <section id="summary">
 <span id="project4-summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>

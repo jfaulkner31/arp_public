@@ -103,13 +103,36 @@ An example is shown below for the implementation of the variable hpp.
             }
         self.hpp = hpp
 
-To properly use the new implementation, in if statement was also added to :class:``
+To properly use the new implementation, in if statement was also added to :class:`nem.CartesianNem1D._ConsrevEqs` when accessing the symbolic or analytical representation of the basis functions.
+
+.. code::
+
+  for ig in range(ng):
+    for hIdx, hFunc in h.items():
+        # Symbolic expression --- evaluate using xval
+        if self.symbolic:
+            eqs[ig, ig*nc+hIdx] = grMultp[ig]*hFunc.subs(self.x, xval)
+        else:
+        # Manually entered expressions --- just call the lambda function using xval.
+            eqs[ig, ig*nc+hIdx] = grMultp[ig]*hFunc(xval)
+
+When evaluating a given function, the lambda function is simply called in lieu of using the symbolic representation.
 
 .. _project4_results:
 
 ===========
 Results
 ===========
+
+---------------------
+Analytical Integrals
+---------------------
+
+To test the analytical integrals, a quick jupyter notebook function was written :ref:`HERE <analytical_results_p4>`.
+As shown, all the evaluations match for the symbolic and the analytical implementations.
+
+Moreso, the analytical implementation was tested for an actual problem. The original problem was ran and results are plotted below for the F12-F2 column.
+
 
 .. _project4_summary:
 
