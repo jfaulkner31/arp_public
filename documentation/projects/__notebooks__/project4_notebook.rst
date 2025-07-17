@@ -983,6 +983,8 @@ We have added a boolean to the input “symbolic=” to the input to indicate wh
 All numbers match for every expression - we continue as is and set do_symbolic = False
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+.. _jupyter_analytical_r4:
+
 .. code:: ipython3
 
     # Set whether to use symbolic or not...

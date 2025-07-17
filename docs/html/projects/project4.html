@@ -53,6 +53,16 @@
 Previously, the nodal expansion method has been implementated in-class.
 Therefore, this report will be documentation of how to use the module with Serpent
 while also introducing the extension of the in-class implemented done as part of this project.</p>
+<p>The following 2D colorset is used in all calculations:</p>
+<a class="reference internal image-reference" href="../_images/homework4_4_0.png"><img alt="../_images/homework4_4_0.png" class="align-center" src="../_images/homework4_4_0.png" style="width: 500px;" />
+</a>
+<p>The assemblies are labelled as follows:</p>
+<ul class="simple">
+<li><p>Top left - F12</p></li>
+<li><p>Top right - Reflector</p></li>
+<li><p>Bottom left - F2</p></li>
+<li><p>Bottom right - F11</p></li>
+</ul>
 </section>
 <section id="methodology">
 <span id="project4-methods"></span><h2>Methodology<a class="headerlink" href="#methodology" title="Link to this heading">¶</a></h2>
@@ -136,19 +146,159 @@ previously used to store the symbolic representation of the integrals, derivativ
 <section id="results">
 <span id="project4-results"></span><h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
 <section id="id1">
-<h3>Analytical Integrals<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>To test the analytical integrals, a quick jupyter notebook function was written <a class="reference internal" href="__notebooks__/project4_notebook.html#analytical-results-p4"><span class="std std-ref">HERE</span></a></p>
+<h3>Transverse y leakages<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>The implementation of the transverse y leakage was done and problem was ran. The neutron flux for the F2-F12 and F11-Ref. columns is shown below.
+The NEM is able to closely match the flux in each group and each node.</p>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_10_1.png"><img alt="../_images/homework4_10_1.png" src="../_images/homework4_10_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_10_2.png"><img alt="../_images/homework4_10_2.png" src="../_images/homework4_10_2.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_11_1.png"><img alt="../_images/homework4_11_1.png" src="../_images/homework4_11_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_11_2.png"><img alt="../_images/homework4_11_2.png" src="../_images/homework4_11_2.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Also shown are the heterogenous neutron fluxes:</p>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_12_1.png"><img alt="../_images/homework4_12_1.png" src="../_images/homework4_12_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_12_3.png"><img alt="../_images/homework4_12_3.png" src="../_images/homework4_12_3.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p>And finally the transverse leakages are plotted:</p>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_15_1.png"><img alt="../_images/homework4_15_1.png" src="../_images/homework4_15_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_16_1.png"><img alt="../_images/homework4_16_1.png" src="../_images/homework4_16_1.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_17_1.png"><img alt="../_images/homework4_17_1.png" src="../_images/homework4_17_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_18_1.png"><img alt="../_images/homework4_18_1.png" src="../_images/homework4_18_1.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Analytical Integrals<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>To test the analytical integrals, a quick jupyter notebook function was written <a class="reference internal" href="__notebooks__/project4_notebook.html#analytical-results-p4"><span class="std std-ref">HERE</span></a>.</p>
+<p>The output is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hp</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.0466853408029879</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.046685340802987856</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.280112044817927</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.2801120448179271</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.128384687208217</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.1283846872082166</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.158730158730159</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.15873015873015872</span>
+<span class="n">hpp</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.0130771262753467</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.013077126275346736</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.0130771262753467</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.013077126275346738</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.0248465399231588</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.024846539923158804</span>
+<span class="n">hint</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">21.4200000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">21.42</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">10.7100000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">10.71</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">16.0650000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">16.065</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">2.67750000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">2.6775</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">2.40975000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">2.40975</span>
+<span class="n">hh1int</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">10.7100000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">10.71</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">7.14000000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">7.14</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">13.3875000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">13.387500000000001</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">2.49900000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">2.499</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">2.09737500000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">2.0973749999999995</span>
+<span class="n">hh2int</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">16.0650000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">16.065</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">13.3875000000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">13.387500000000001</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">29.1847500000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">29.184749999999998</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">6.02437500000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">6.024375</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">4.98971250000000</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">4.989703320000001</span>
+<span class="n">hpph1int</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.140056022408964</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.14005602240896356</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.0933706816059757</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.09337068160597571</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.126050420168067</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.12605042016806725</span>
+<span class="n">hpph2int</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.210084033613445</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.21008403361344535</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.175070028011204</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.17507002801120447</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">SYMBOLIC</span><span class="p">:</span> <span class="mf">0.268440709617180</span> <span class="n">ANALYTICAL</span><span class="p">:</span> <span class="mf">0.2684407096171802</span>
+</pre></div>
+</div>
+<p>As shown, all the evaluations match for the symbolic and the analytical implementations.</p>
+<p>Moreso, the analytical implementation was tested for an actual problem. The original problem was ran and results are plotted below for the F12-F2 column.</p>
+<p>They exactly match the results from before.</p>
+<table class="no-border docutils align-center">
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="../_images/homework4_30_1.png"><img alt="../_images/homework4_30_1.png" src="../_images/homework4_30_1.png" style="width: 400px;" />
+</a>
+</td>
+<td><a class="reference internal image-reference" href="../_images/homework4_30_2.png"><img alt="../_images/homework4_30_2.png" src="../_images/homework4_30_2.png" style="width: 400px;" />
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the speedup was compared by running both the analytical and symbolic problems. The jupyter cells are shown <a class="reference internal" href="__notebooks__/project4_notebook.html#jupyter-analytical-r4"><span class="std std-ref">HERE</span></a></p>
+<p>The speedup was determined to be a factor of 158x when comparing the symbolic and analytical execution times!</p>
 </section>
 </section>
 <section id="summary">
 <span id="project4-summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>In summary, the goal of this work was to first develop the nodal expansion method considering the transverse leakages in the x direction.
+Once done, the task was then to generalize NEM for 2D problems in both the x and y directions. A colorset was ran in the y direction and the
+solution was found to match the reference solution from Serpent.</p>
+<p>Then, the “lazy” symbolic approach in Python was updated with the true analytical approach and it was found that problem was sped up by a factor of 158! In larger or
+iterative problems this
+speedup would certainly be extremely useful.</p>
 </section>
 </section>
 <section id="jupyter-notebook">
 <span id="project4-jupyter"></span><h1>Jupyter Notebook<a class="headerlink" href="#jupyter-notebook" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p>A Jupyter notebook is given for the calculations performed <a class="reference internal" href="__notebooks__/project4_notebook.html#proj4-notebook"><span class="std std-ref">HERE</span></a></p></li>
+</ul>
 </section>
 <section id="classes-and-objects">
 <span id="project4-classes"></span><h1>Classes and Objects<a class="headerlink" href="#classes-and-objects" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><ul class="simple">
+<li><p>CartesianNem1D class developed in class and as part of HW <a class="reference internal" href="__python_docs__/nem.html#nem.CartesianNem1D" title="nem.CartesianNem1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.CartesianNem1D</span></code></a></p></li>
+<li><p>Serpent results grabber developed in class: <a class="reference internal" href="__python_docs__/nem.html#nem.GetSerpentRes" title="nem.GetSerpentRes"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.GetSerpentRes</span></code></a></p></li>
+<li><p>1D plotter developed in class: <a class="reference internal" href="__python_docs__/nem.html#nem.Plot1d" title="nem.Plot1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.Plot1d</span></code></a></p></li>
+<li><p>2D plotter developed as part of HW <a class="reference internal" href="__python_docs__/nem.html#nem.Plot2d" title="nem.Plot2d"><code class="xref py py-class docutils literal notranslate"><span class="pre">nem.Plot2d</span></code></a></p></li>
+</ul>
+</div></blockquote>
 </section>
 
 
