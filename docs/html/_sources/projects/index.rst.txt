@@ -31,6 +31,10 @@ Projects
    * :ref:`Results and Documentation Report<proj4>`
    * :ref:`Project 4 Notebook <proj4_notebook>`
    * NEM Module :class:`nem`
+* Project 5: Analytic Flux Nodal Expansion Method
+   * :ref:`Results and Documentation Report <proj5>`
+   * :ref:`Project 5 Notebook <project5_notebook>`
+   * Analytic Flux Nodal Expansion Module :class:`analytic_nodal_expansion`
 
 
 .. toctree::
@@ -43,12 +47,14 @@ Projects
    project2_sph_harm.rst
    project3.rst
    project4.rst
+   project5.rst
 
    __python_docs__/pointsource_sphere
    __python_docs__/transportcorrection
    __python_docs__/sph_harmonics
    __python_docs__/diffusion_coeffs
    __python_docs__/nem
+   __python_docs__/analytic_nodal_expansion
 
    __notebooks__/project1_notebook.rst
    __notebooks__/project2_simpsons_test_notebook.rst
@@ -56,6 +62,7 @@ Projects
    __notebooks__/project2_workshop_spherical_harmonics.rst
    __notebooks__/project3.rst
    __notebooks__/project4_notebook.rst
+   __notebooks__/project5_notebook.rst
 
 
 .. image:: ../fancy_images/buzz_scary.png

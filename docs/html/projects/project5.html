@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Project 5: Analytic Flux Nodal Expansion Method &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointsource_sphere module" href="__python_docs__/pointsource_sphere.html" />
+    <link rel="prev" title="Project 4: Nodal Expansion Method" href="project4.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="project-5-analytic-flux-nodal-expansion-method">
+<span id="proj5"></span><h1>Project 5: Analytic Flux Nodal Expansion Method<a class="headerlink" href="#project-5-analytic-flux-nodal-expansion-method" title="Link to this heading">¶</a></h1>
+<section id="quick-scrolling">
+<h2>Quick Scrolling<a class="headerlink" href="#quick-scrolling" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><span class="xref std std-ref">Description</span></p></li>
+<li><p><a class="reference internal" href="#project5-methods"><span class="std std-ref">Methodology</span></a></p></li>
+<li><p><a class="reference internal" href="#project5-results"><span class="std std-ref">Results</span></a></p></li>
+<li><p><a class="reference internal" href="#project5-summary"><span class="std std-ref">Summary</span></a></p></li>
+<li><p><a class="reference internal" href="#project5-jupyter"><span class="std std-ref">Jupyter Notebook</span></a></p></li>
+<li><p><a class="reference internal" href="#project5-classes"><span class="std std-ref">Methods and Classes</span></a></p></li>
+</ul>
+</section>
+<section id="description">
+<span id="project5-description"></span><h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>This project involves the implementation of the
+Analytic Flux Nodal Expansion Method (AFEN). This method typically takes boundary
+conditions in the form of side fluxes or corner fluxes
+from a reference (e.g. Serpent) or a NEM tool. AFEN provides a 2D representation
+of the homogenous flux upon solving which can be used directly to compute the
+2D homogenous power distribution. Normally, the 2D power is also paired with
+form factors to better reconstruct heterogenous fluxes; this last part, however,
+is not done in this project. (See Project 6)</p>
+</section>
+<section id="methodology">
+<span id="project5-methods"></span><h2>Methodology<a class="headerlink" href="#methodology" title="Link to this heading">¶</a></h2>
+<p>This project consists of three parts:</p>
+<ol class="arabic simple">
+<li><p>Implementation of an analytical method for computing integrals in place of Python’s symbolic toolbox.</p></li>
+<li><p>Calculation of the homogenous power density for each fuel assembly in the colorset.</p></li>
+<li><p>Calculation of 1D averaged quantities with comparison to Serpent.</p></li>
+</ol>
+<p>The analytic integrals and the power calculation are now discussed.</p>
+<section id="analytical-integrals">
+<h3>Analytical Integrals<a class="headerlink" href="#analytical-integrals" title="Link to this heading">¶</a></h3>
+<p>The Python symbolic toolbox was previously used to compute certain integrals used
+in the AFEN basis functions. To provide a massive boost to speedup, analytic functions
+were pre-evaluated and input into the code in place of the symbolic toolbox.</p>
+<p>The implementation was made so that the same data structures used previously may be
+used again for the analytical integrals with only minimal changes to the code.</p>
+<p>The following is a short code example from <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.AFEN2D._IntegrateY" title="analytic_nodal_expansion.AFEN2D._IntegrateY"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.AFEN2D._IntegrateY</span></code></a></p>
+<p>Essentially, a flag “symbolic” has been added to the <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.AFEN2D" title="analytic_nodal_expansion.AFEN2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.AFEN2D</span></code></a> class.
+Based on user input, the symbolic or analytic expression is chosen. Python’s lambda functions are used
+to store the necessary functions in the same data structure previously used for the symbolic representation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_IntegrateY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;y integration over all the expansion functions&quot;&quot;&quot;</span>
+
+    <span class="n">xsi_int</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolic</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ng</span><span class="p">):</span>
+            <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">xsi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xsi</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">xsi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ng</span><span class="p">):</span>
+            <span class="n">lam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigenvals</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span>
+            <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">lam</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+                <span class="n">xsi_int</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">C</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="o">/</span> <span class="n">C</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">xsiIntY</span> <span class="o">=</span> <span class="n">xsi_int</span>
+</pre></div>
+</div>
+</section>
+<section id="d-power-calculation">
+<h3>2D power calculation<a class="headerlink" href="#d-power-calculation" title="Link to this heading">¶</a></h3>
+</section>
+<section id="id1">
+<h3>Analytical Integrals<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+</section>
+</section>
+<section id="results">
+<span id="project5-results"></span><h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
+</section>
+<section id="summary">
+<span id="project5-summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+<section id="jupyter-notebook">
+<span id="project5-jupyter"></span><h1>Jupyter Notebook<a class="headerlink" href="#jupyter-notebook" title="Link to this heading">¶</a></h1>
+</section>
+<section id="classes-and-objects">
+<span id="project5-classes"></span><h1>Classes and Objects<a class="headerlink" href="#classes-and-objects" title="Link to this heading">¶</a></h1>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Projects</a><ul>
+      <li>Previous: <a href="project4.html" title="previous chapter">Project 4: Nodal Expansion Method</a></li>
+      <li>Next: <a href="__python_docs__/pointsource_sphere.html" title="next chapter">pointsource_sphere module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/projects/project5.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
