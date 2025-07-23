@@ -220,6 +220,16 @@ functions are exactly the same between the symbolic and analytical representatio
     Group 1 | key7 | ANY = 0.0 | SYM = 0 | Diff. = 0
     Group 1 | key8 | ANY = 150244.47045224538 | SYM = 150244.470452245 | Diff. = -2.91038304567337e-11
 
+---------------------
+2D power calculation
+---------------------
+
+A 2D power calculation was also performed for each assmebly.
+
+.. image:: __notebooks__/homework5_files/homework5_55_2.png
+	:align: center
+	:width: 400
+
 .. _project5_summary:
 
 =================================
