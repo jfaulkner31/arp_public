@@ -1,5 +1,4 @@
 .. _project5_notebook:
-
 NRE7203: Advanced Reactor Physics
 =================================
 
@@ -234,7 +233,6 @@ Reconstruct the homogeneous flux
 
     univres.verifyBasisFunctions()
 
-.. _proj5_notebook_results_basis_functions:
 
 .. parsed-literal::
 
@@ -506,6 +504,8 @@ Question 1 - Comparing runtimes and analytical integrals
 
     univ_f2_any.verifyBasisFunctions()
 
+
+.. _proj5_notebook_results_basis_functions:
 
 .. parsed-literal::
 

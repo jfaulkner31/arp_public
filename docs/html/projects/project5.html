@@ -58,6 +58,16 @@ of the homogenous flux upon solving which can be used directly to compute the
 2D homogenous power distribution. Normally, the 2D power is also paired with
 form factors to better reconstruct heterogenous fluxes; this last part, however,
 is not done in this project. (See Project 6)</p>
+<p>The following 2D colorset is used in all calculations:</p>
+<a class="reference internal image-reference" href="../_images/homework4_4_0.png"><img alt="../_images/homework4_4_0.png" class="align-center" src="../_images/homework4_4_0.png" style="width: 500px;" />
+</a>
+<p>The assemblies are labelled as follows:</p>
+<ul class="simple">
+<li><p>Top left - F12</p></li>
+<li><p>Top right - Reflector</p></li>
+<li><p>Bottom left - F2</p></li>
+<li><p>Bottom right - F11</p></li>
+</ul>
 </section>
 <section id="methodology">
 <span id="project5-methods"></span><h2>Methodology<a class="headerlink" href="#methodology" title="Link to this heading">¶</a></h2>
@@ -228,16 +238,66 @@ functions are exactly the same between the symbolic and analytical representatio
 </pre></div>
 </div>
 </section>
+<section id="id2">
+<h3>2D power calculation<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>A 2D power calculation was also performed for each assembly and is shown below. Results for the lower left corner assembly are poor due to the
+burnable poisons in the reference problem. Otherwise, results are reasonable but may be improved - especially with the use of form factors.</p>
+<p>Heterogenous power from Serpent (W/cc):</p>
+<a class="reference internal image-reference" href="../_images/homework5_55_2.png"><img alt="../_images/homework5_55_2.png" class="align-center" src="../_images/homework5_55_2.png" style="width: 400px;" />
+</a>
+<p>Homogenous AFEN power density (W/cc):</p>
+<a class="reference internal image-reference" href="../_images/homework5_56_1.png"><img alt="../_images/homework5_56_1.png" class="align-center" src="../_images/homework5_56_1.png" style="width: 400px;" />
+</a>
+<p>Power density percent difference (%):</p>
+<a class="reference internal image-reference" href="../_images/homework5_56_3.png"><img alt="../_images/homework5_56_3.png" class="align-center" src="../_images/homework5_56_3.png" style="width: 400px;" />
+</a>
+</section>
+<section id="d-power-comparisons">
+<h3>1D power comparisons<a class="headerlink" href="#d-power-comparisons" title="Link to this heading">¶</a></h3>
+<p>Finally, the results from Serpent, the NEM module, and the AFEN module were vertically averaged to compute the x-direction
+results for the following:</p>
+<ol class="arabic simple">
+<li><p>Fast flux in F12-Ref.</p></li>
+<li><p>Thermal flux in F12-Ref.</p></li>
+<li><p>Power density in F2-F11</p></li>
+</ol>
+<p>In general, good agreement is shown between Serpent and the two different methods.</p>
+<p>Results are shown below:</p>
+<p>Fast flux in F12-Ref:</p>
+<a class="reference internal image-reference" href="../_images/homework5_63_0.png"><img alt="../_images/homework5_63_0.png" class="align-center" src="../_images/homework5_63_0.png" style="width: 400px;" />
+</a>
+<p>Thermal flux in F12-Ref:</p>
+<a class="reference internal image-reference" href="../_images/homework5_64_0.png"><img alt="../_images/homework5_64_0.png" class="align-center" src="../_images/homework5_64_0.png" style="width: 400px;" />
+</a>
+<p>Power density in F2-F11</p>
+<a class="reference internal image-reference" href="../_images/homework5_62_0.png"><img alt="../_images/homework5_62_0.png" class="align-center" src="../_images/homework5_62_0.png" style="width: 400px;" />
+</a>
+</section>
 </section>
 <section id="summary">
 <span id="project5-summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>In summary, the goal of this work was to first develop the AFEN method.
+Then, the AFEN method was sped up by implementing analytical expressions meant to resemble the basis functions and various basis function integrals.</p>
+<p>Then, various calculationns were done for the fluxes and power densities - 2D representations of the homogenous flux and power were constructed and compared to Serpent heterogenous results.
+The accuracy of each was reasonable but can easily be improved by using form factors for each fuel pin.</p>
 </section>
 </section>
 <section id="jupyter-notebook">
 <span id="project5-jupyter"></span><h1>Jupyter Notebook<a class="headerlink" href="#jupyter-notebook" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p>A Jupyter notebook is given for the calculations performed <a class="reference internal" href="__notebooks__/project5_notebook.html#project5-notebook"><span class="std std-ref">HERE</span></a></p></li>
+</ul>
 </section>
 <section id="classes-and-objects">
 <span id="project5-classes"></span><h1>Classes and Objects<a class="headerlink" href="#classes-and-objects" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><ul class="simple">
+<li><p>AFEN class developed in class <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.AFEN2D" title="analytic_nodal_expansion.AFEN2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.AFEN2D</span></code></a></p></li>
+<li><p>Power calculator for AFEN: <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.AFEN2D.PinPower" title="analytic_nodal_expansion.AFEN2D.PinPower"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.AFEN2D.PinPower</span></code></a></p></li>
+<li><p>Verifier for analytical function representations: <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.AFEN2D.verifyBasisFunctions" title="analytic_nodal_expansion.AFEN2D.verifyBasisFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.AFEN2D.verifyBasisFunctions</span></code></a></p></li>
+<li><p>meshTo1D function for converting mesh results to 1D results by row or column averaging: <a class="reference internal" href="__python_docs__/analytic_nodal_expansion.html#analytic_nodal_expansion.meshTo1D" title="analytic_nodal_expansion.meshTo1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">analytic_nodal_expansion.meshTo1D</span></code></a></p></li>
+</ul>
+</div></blockquote>
 </section>
 
 

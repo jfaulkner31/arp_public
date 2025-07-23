@@ -29,6 +29,19 @@ of the homogenous flux upon solving which can be used directly to compute the
 form factors to better reconstruct heterogenous fluxes; this last part, however,
 is not done in this project. (See Project 6)
 
+The following 2D colorset is used in all calculations:
+
+.. image:: homework4_files/homework4_4_0.png
+	:align: center
+	:width: 500
+
+The assemblies are labelled as follows:
+
+* Top left - F12
+* Top right - Reflector
+* Bottom left - F2
+* Bottom right - F11
+
 .. _project5_methods:
 
 ===========
@@ -220,18 +233,89 @@ functions are exactly the same between the symbolic and analytical representatio
     Group 1 | key7 | ANY = 0.0 | SYM = 0 | Diff. = 0
     Group 1 | key8 | ANY = 150244.47045224538 | SYM = 150244.470452245 | Diff. = -2.91038304567337e-11
 
+---------------------
+2D power calculation
+---------------------
+
+A 2D power calculation was also performed for each assembly and is shown below. Results for the lower left corner assembly are poor due to the
+burnable poisons in the reference problem. Otherwise, results are reasonable but may be improved - especially with the use of form factors.
+
+Heterogenous power from Serpent (W/cc):
+
+.. image:: __notebooks__/homework5_files/homework5_55_2.png
+	:align: center
+	:width: 400
+
+Homogenous AFEN power density (W/cc):
+
+.. image:: __notebooks__/homework5_files/homework5_56_1.png
+	:align: center
+	:width: 400
+
+Power density percent difference (%):
+
+.. image:: __notebooks__/homework5_files/homework5_56_3.png
+	:align: center
+	:width: 400
+
+---------------------
+1D power comparisons
+---------------------
+
+Finally, the results from Serpent, the NEM module, and the AFEN module were vertically averaged to compute the x-direction
+results for the following:
+
+1. Fast flux in F12-Ref.
+2. Thermal flux in F12-Ref.
+3. Power density in F2-F11
+
+In general, good agreement is shown between Serpent and the two different methods.
+
+Results are shown below:
+
+Fast flux in F12-Ref:
+
+.. image:: __notebooks__/homework5_files/homework5_63_0.png
+	:align: center
+	:width: 400
+
+Thermal flux in F12-Ref:
+
+.. image:: __notebooks__/homework5_files/homework5_64_0.png
+	:align: center
+	:width: 400
+
+Power density in F2-F11
+
+.. image:: __notebooks__/homework5_files/homework5_62_0.png
+	:align: center
+	:width: 400
+
 .. _project5_summary:
 
 =================================
 Summary
 =================================
 
+In summary, the goal of this work was to first develop the AFEN method.
+Then, the AFEN method was sped up by implementing analytical expressions meant to resemble the basis functions and various basis function integrals.
+
+Then, various calculationns were done for the fluxes and power densities - 2D representations of the homogenous flux and power were constructed and compared to Serpent heterogenous results.
+The accuracy of each was reasonable but can easily be improved by using form factors for each fuel pin.
+
 .. _project5_jupyter:
 
 Jupyter Notebook
 ---------------------------------------------
 
+* A Jupyter notebook is given for the calculations performed :ref:`HERE <project5_notebook>`
+
+
 .. _project5_classes:
 
 Classes and Objects
 ---------------------------------------------
+  * AFEN class developed in class :class:`analytic_nodal_expansion.AFEN2D`
+  * Power calculator for AFEN: :class:`analytic_nodal_expansion.AFEN2D.PinPower`
+  * Verifier for analytical function representations: :class:`analytic_nodal_expansion.AFEN2D.verifyBasisFunctions`
+  * meshTo1D function for converting mesh results to 1D results by row or column averaging: :class:`analytic_nodal_expansion.meshTo1D`
