@@ -15,7 +15,7 @@
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="NRE 7203 - Advanced Reactor Physics - Homework 1" href="../__notebooks__/project1_notebook.html" />
+    <link rel="next" title="analytic_nodal_expansion module" href="analytic_nodal_expansion.html" />
     <link rel="prev" title="diffusion_coeffs module" href="diffusion_coeffs.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -37,14 +37,15 @@
   <section id="module-nem">
 <span id="nem-module"></span><h1>nem module<a class="headerlink" href="#module-nem" title="Link to this heading">¶</a></h1>
 <p>NEM.py</p>
-<dl class="simple">
-<dt>Use of Nodal Expansion Method (NEM) to expand the flux using known:</dt><dd><ol class="arabic simple">
+<p>Use of Nodal Expansion Method (NEM)
+to expand the flux using known:</p>
+<blockquote>
+<div><ol class="arabic simple">
 <li><p>Average flux,</p></li>
 <li><p>Net currents</p></li>
 <li><p>Conservation of the 1st and 2nd moments</p></li>
 </ol>
-</dd>
-</dl>
+</div></blockquote>
 <p>The solution is obtained in 1-dim.</p>
 <p>Created on Sun June 29 18:00:00 2025 &#64;author: Dan Kotlyar
 Last updated on Mon July 07 17:00:00 2025 &#64;author: Dan Kotlyar</p>
@@ -57,20 +58,34 @@ Last updated on Mon July 07 17:00:00 2025 &#64;author: Dan Kotlyar</p>
 <p>This function allows to calculate the expansion coefficients for
 the PARCS based expanded form
 e.g., phi(u) = a0+a1*h1(u/a)+…+a4*h4(u/a)</p>
-<p>The transverse leakage source term relies on the following relation:
-L(u) = l0+l1*h1(u/a)+l2*h2(u/a) where, u = x,y, or z</p>
+<dl>
+<dt>The transverse leakage source term relies on the following relation:</dt><dd><blockquote>
+<div><p>L(u) = l0+l1*h1(u/a)+l2*h2(u/a)</p>
+</div></blockquote>
+<p>where, u = x,y, or z</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>length</strong> (<em>float</em>) – the length of the node in cm</p></li>
-<li><p><strong>xs</strong> (<em>dict</em>) – includes the following keys and corresponding group values:
-nsfxs : group-wise fission production (nu*SigF) in 1/cm [1, …, G] where 1 is the fast group
-chi : fission spectrum
+<li><p><strong>xs</strong> (<em>dict</em>) – <p>includes the following keys and corresponding group values:
+nsfxs : group-wise fission production (nu*SigF) in 1/cm</p>
+<blockquote>
+<div><p>[1, …, G] where 1 is the fast group</p>
+</div></blockquote>
+<p>chi : fission spectrum
 diffxs : diffusion coefficient in cm
 remxs : removal cross section (rabs+out-of-group scattering) in 1/cm
-spmtx : group-to-group scattering production in 1/cm.
-keff : eigenvalue of the entire problem
-ng : number of energy groups</p></li>
+spmtx : group-to-group scattering production in 1/cm.</p>
+<blockquote>
+<div><p>The structure of the matrix is:
+1-&gt;1, 1-&gt;2, … 1-&gt;G   (from the fastest group)
+2-&gt;1, 2-&gt;2, … 2-&gt;G</p>
+</div></blockquote>
+<p>keff : eigenvalue of the entire problem
+ng : number of energy groups</p>
+</p></li>
 <li><p><strong>bc</strong> (<em>dict</em>) – includes the following keys and corresponding group values:
 avFlux : nodal average flux in n/cm^2/s
 wJnet : surface mean net current on the left boundary in n/cm^2/s
@@ -356,7 +371,7 @@ sdx :</p></li>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../index.html">Projects</a><ul>
       <li>Previous: <a href="diffusion_coeffs.html" title="previous chapter">diffusion_coeffs module</a></li>
-      <li>Next: <a href="../__notebooks__/project1_notebook.html" title="next chapter">NRE 7203 - Advanced Reactor Physics - Homework 1</a></li>
+      <li>Next: <a href="analytic_nodal_expansion.html" title="next chapter">analytic_nodal_expansion module</a></li>
   </ul></li>
   </ul></li>
 </ul>

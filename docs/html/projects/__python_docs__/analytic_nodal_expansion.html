@@ -34,9 +34,9 @@
 
           <div class="body" role="main">
             
-  <section id="analytic-nodal-expansion-module">
-<h1>analytic_nodal_expansion module<a class="headerlink" href="#analytic-nodal-expansion-module" title="Link to this heading">¶</a></h1>
-<p id="module-analytic_nodal_expansion">analytic_nodal_expansion.py</p>
+  <section id="module-analytic_nodal_expansion">
+<span id="analytic-nodal-expansion-module"></span><h1>analytic_nodal_expansion module<a class="headerlink" href="#module-analytic_nodal_expansion" title="Link to this heading">¶</a></h1>
+<p>analytic_nodal_expansion.py</p>
 <p>Analytic Function Expansion Nodal (AFEN) for 2-dim Boundary Value
 Problem is used to reconstruct the 2-dim flux within the assembly.</p>
 <blockquote>
@@ -58,23 +58,14 @@ Last updated on Mon July 14 14:30:00 2025 &#64;author: Dan Kotlyar</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>length</strong> (<em>float</em>) – the length of the node in cm</p></li>
-<li><p><strong>xs</strong> (<em>dict</em>) – <p>includes the following keys and corresponding group values:
-nsfxs : group-wise fission production (nu*SigF) in 1/cm</p>
-<blockquote>
-<div><p>[1, …, G] where 1 is the fast group</p>
-</div></blockquote>
-<p>chi : fission spectrum
+<li><p><strong>xs</strong> (<em>dict</em>) – includes the following keys and corresponding group values:
+nsfxs : group-wise fission production (nu*SigF) in 1/cm [1, …, G] where 1 is the fast group
+chi : fission spectrum
 diffxs : diffusion coefficient in cm
 remxs : removal cross section (rabs+out-of-group scattering) in 1/cm
-spmtx : group-to-group scattering production in 1/cm.</p>
-<blockquote>
-<div><p>The structure of the matrix is:
-1-&gt;1, 1-&gt;2, … 1-&gt;G   (from the fastest group)
-2-&gt;1, 2-&gt;2, … 2-&gt;G</p>
-</div></blockquote>
-<p>keff : eigenvalue of the entire problem
-ng : number of energy groups</p>
-</p></li>
+spmtx : group-to-group scattering production in 1/cm.
+keff : eigenvalue of the entire problem
+ng : number of energy groups</p></li>
 <li><p><strong>bc</strong> (<em>dict</em>) – with the following keys and corresponding group flux values:
 av : node average
 w : west surface

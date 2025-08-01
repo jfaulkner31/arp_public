@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Final Project &#8212; NRE7203 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../../glossary.html" />
+    <link rel="prev" title="NRE7203: Advanced Reactor Physics" href="project5_notebook.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="final-project">
+<span id="project6-notebook"></span><h1>Final Project<a class="headerlink" href="#final-project" title="Link to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import relevant packages</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">serpentTools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">serpentTools.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">rc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffusion_coeffs</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">NEM</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">AFEN</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Default values</span>
+<span class="c1"># rcParams[&#39;figure.dpi&#39;] = 300</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="c1"># Set default figure size</span>
+
+<span class="c1"># rc serpent version</span>
+<span class="n">rc</span><span class="p">[</span><span class="s2">&quot;serpentVersion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2.2.1&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="question-1">
+<h1>Question 1<a class="headerlink" href="#question-1" title="Link to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Question 1</span>
+<span class="c1"># part 1: condense from 70-&gt;2g for each FA in the FA onlly assemblies</span>
+<span class="n">resFile_455</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_455_70g_900K_res.m&quot;</span>
+<span class="n">resFile_260</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_260_70g_res.m&quot;</span>
+
+<span class="n">res_455</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile_455</span><span class="p">)</span>
+<span class="n">res_260</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile_260</span><span class="p">)</span>
+
+
+<span class="c1">#########</span>
+<span class="c1"># 4.55% #</span>
+<span class="c1">#########</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;4.55% Below:&quot;</span><span class="p">)</span>
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_455</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">sigT</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_FA</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">infTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># out-scatter</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c1"># Inscattering</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_in_FA</span><span class="p">,</span> <span class="n">Jg</span> <span class="o">=</span> <span class="n">InScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span> <span class="c1"># get inscatter</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Outscatter</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_out_FA</span> <span class="o">=</span> <span class="n">OutScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Flx Limited</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_flx_FA</span> <span class="o">=</span> <span class="n">FluxLimited</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flux Limited Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Raw Condensation</span>
+<span class="n">raw_condensed_diff</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">cmmTransp_FA</span><span class="p">,</span> <span class="n">flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+<span class="n">raw_condensed_inv_diff</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">Condense2gr</span><span class="p">(</span><span class="n">cmmTransp_FA</span><span class="p">,</span> <span class="n">flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;condensed CMM (1/3/tr method):&quot;</span><span class="p">,</span><span class="n">raw_condensed_diff</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;condensed CMM (tr method):&quot;</span><span class="p">,</span><span class="n">raw_condensed_inv_diff</span><span class="p">)</span>
+
+<span class="c1"># Reference</span>
+
+
+<span class="c1">#########</span>
+<span class="c1"># 2.60% #</span>
+<span class="c1">#########</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;2.60% Below:&quot;</span><span class="p">)</span>
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">70</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_260</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infFlx&#39;</span><span class="p">]</span>
+<span class="n">sigT</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTot&#39;</span><span class="p">]</span>
+<span class="n">SP1</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp1&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_FA</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">infTransp</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infTranspxs&#39;</span><span class="p">]</span>  <span class="c1"># out-scatter</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">groups</span> <span class="o">*</span> <span class="mf">1E+06</span>
+<span class="n">SP1</span><span class="o">=</span><span class="n">SP1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c1"># Inscattering</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_in_FA</span><span class="p">,</span> <span class="n">Jg</span> <span class="o">=</span> <span class="n">InScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span> <span class="c1"># get inscatter</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Outscatter</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_out_FA</span> <span class="o">=</span> <span class="n">OutScatter</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outscatter Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Flx Limited</span>
+<span class="n">transportxs</span><span class="p">,</span> <span class="n">tau_flx_FA</span> <span class="o">=</span> <span class="n">FluxLimited</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">sigS1</span><span class="o">=</span><span class="n">SP1</span><span class="p">,</span> <span class="n">sigT</span><span class="o">=</span><span class="n">sigT</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transportxs</span><span class="p">,</span> <span class="n">flx</span><span class="o">=</span><span class="n">flx</span><span class="p">,</span><span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flux Limited Diffusion Coeff. =&quot;</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># Raw Condensation</span>
+<span class="n">raw_condensed_diff</span> <span class="o">=</span> <span class="n">Condense2gr</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">cmmTransp_FA</span><span class="p">,</span> <span class="n">flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+<span class="n">raw_condensed_inv_diff</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">Condense2gr</span><span class="p">(</span><span class="n">cmmTransp_FA</span><span class="p">,</span> <span class="n">flx</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;condensed CMM (1/3/tr method):&quot;</span><span class="p">,</span><span class="n">raw_condensed_diff</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;condensed CMM (tr method):&quot;</span><span class="p">,</span><span class="n">raw_condensed_inv_diff</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">4.55</span><span class="o">%</span> <span class="n">Below</span><span class="p">:</span>
+<span class="n">Inscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.36809841</span> <span class="mf">0.39875562</span><span class="p">]</span>
+<span class="n">Outscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.47303773</span> <span class="mf">0.3621981</span> <span class="p">]</span>
+<span class="n">Flux</span> <span class="n">Limited</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.3210531</span>  <span class="mf">0.38653842</span><span class="p">]</span>
+<span class="n">condensed</span> <span class="n">CMM</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">tr</span> <span class="n">method</span><span class="p">):</span> <span class="p">[</span><span class="mf">1.39156005</span> <span class="mf">0.40622894</span><span class="p">]</span>
+<span class="n">condensed</span> <span class="n">CMM</span> <span class="p">(</span><span class="n">tr</span> <span class="n">method</span><span class="p">):</span> <span class="p">[</span><span class="mf">1.12251807</span> <span class="mf">0.34999056</span><span class="p">]</span>
+<span class="mf">2.60</span><span class="o">%</span> <span class="n">Below</span><span class="p">:</span>
+<span class="n">Inscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.36078691</span> <span class="mf">0.39423531</span><span class="p">]</span>
+<span class="n">Outscatter</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.46493777</span> <span class="mf">0.3693202</span> <span class="p">]</span>
+<span class="n">Flux</span> <span class="n">Limited</span> <span class="n">Diffusion</span> <span class="n">Coeff</span><span class="o">.</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.31462087</span> <span class="mf">0.38610637</span><span class="p">]</span>
+<span class="n">condensed</span> <span class="n">CMM</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">tr</span> <span class="n">method</span><span class="p">):</span> <span class="p">[</span><span class="mf">1.38438031</span> <span class="mf">0.40681814</span><span class="p">]</span>
+<span class="n">condensed</span> <span class="n">CMM</span> <span class="p">(</span><span class="n">tr</span> <span class="n">method</span><span class="p">):</span> <span class="p">[</span><span class="mf">1.11932516</span> <span class="mf">0.35881331</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="question-2">
+<h1>Question 2<a class="headerlink" href="#question-2" title="Link to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### interpolate the 4.55% from 600 + 1200 -&gt; 900 K</span>
+<span class="n">resFile_600</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_455_2g_600K_res.m&quot;</span>
+<span class="n">resFile_1200</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_455_2g_1200K_res.m&quot;</span>
+<span class="n">resFile_900</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_455_2g_900K_res.m&quot;</span>
+
+<span class="n">res_600</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile_600</span><span class="p">)</span>
+<span class="n">res_1200</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile_1200</span><span class="p">)</span>
+<span class="n">res_900</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">resFile_1200</span><span class="p">)</span>
+
+<span class="n">ng</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># 600</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_600</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">nsf_600</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infNsf&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_FA_600</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">D_600</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">cmmTransp_FA_600</span>
+<span class="n">SP0_600</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp0&#39;</span><span class="p">]</span>
+<span class="n">SP0_600</span><span class="o">=</span><span class="n">SP0_600</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">redabs_600</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infRabsxs&#39;</span><span class="p">]</span>
+
+<span class="c1"># 1200</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_1200</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">nsf_1200</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infNsf&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_FA_1200</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">D_1200</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">cmmTransp_FA_1200</span>
+<span class="n">SP0_1200</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp0&#39;</span><span class="p">]</span>
+<span class="n">SP0_1200</span><span class="o">=</span><span class="n">SP0_1200</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">redabs_1200</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infRabsxs&#39;</span><span class="p">]</span>
+
+<span class="c1"># 900</span>
+<span class="n">univ0</span> <span class="o">=</span> <span class="n">res_900</span><span class="o">.</span><span class="n">getUniv</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">nsf_900</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infNsf&#39;</span><span class="p">]</span>
+<span class="n">cmmTransp_FA_900</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;cmmTranspxs&#39;</span><span class="p">]</span>      <span class="c1"># represents in-scatter</span>
+<span class="n">D_900</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">cmmTransp_FA_900</span>
+<span class="n">SP0_900</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infSp0&#39;</span><span class="p">]</span>
+<span class="n">SP0_900</span><span class="o">=</span><span class="n">SP0_900</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ng</span><span class="p">,</span><span class="n">ng</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">redabs_900</span> <span class="o">=</span> <span class="n">univ0</span><span class="o">.</span><span class="n">infExp</span><span class="p">[</span><span class="s1">&#39;infRabsxs&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;interpolatead D:&quot;</span><span class="p">,</span> <span class="n">interpolateXS</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">D_600</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">D_1200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;loglog&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;interpolatead NSF:&quot;</span><span class="p">,</span> <span class="n">interpolateXS</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">nsf_600</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">nsf_1200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;loglog&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;interpolatead SP0:&quot;</span><span class="p">,</span> <span class="n">interpolateXS</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">SP0_600</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">SP0_1200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;loglog&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;interpolatead redabs:&quot;</span><span class="p">,</span> <span class="n">interpolateXS</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">redabs_600</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">redabs_1200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;loglog&#39;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ref D&quot;</span><span class="p">,</span> <span class="n">D_900</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ref nsf&quot;</span><span class="p">,</span> <span class="n">nsf_900</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ref redabs&quot;</span><span class="p">,</span> <span class="n">redabs_900</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ref sp0&quot;</span><span class="p">,</span> <span class="n">SP0_900</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">interpolatead</span> <span class="n">D</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.39151829</span> <span class="mf">0.40634751</span><span class="p">]</span>
+<span class="n">interpolatead</span> <span class="n">NSF</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00863624</span> <span class="mf">0.17273652</span><span class="p">]</span>
+<span class="n">interpolatead</span> <span class="n">SP0</span><span class="p">:</span> <span class="p">[[</span><span class="mf">0.52972432</span> <span class="mf">0.00238746</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.01711861</span> <span class="mf">1.27196665</span><span class="p">]]</span>
+<span class="n">interpolatead</span> <span class="n">redabs</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01100566</span> <span class="mf">0.12497814</span><span class="p">]</span>
+<span class="n">ref</span> <span class="n">D</span> <span class="p">[</span><span class="mf">1.39175939</span> <span class="mf">0.40653133</span><span class="p">]</span>
+<span class="n">ref</span> <span class="n">nsf</span> <span class="p">[</span><span class="mf">0.00863375</span> <span class="mf">0.172371</span>  <span class="p">]</span>
+<span class="n">ref</span> <span class="n">redabs</span> <span class="p">[</span><span class="mf">0.0111302</span> <span class="mf">0.124775</span> <span class="p">]</span>
+<span class="n">ref</span> <span class="n">sp0</span> <span class="p">[[</span><span class="mf">0.529787</span>   <span class="mf">0.00256537</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.0170528</span>  <span class="mf">1.27156</span>   <span class="p">]]</span>
+</pre></div>
+</div>
+</section>
+<section id="question-3">
+<h1>Question 3<a class="headerlink" href="#question-3" title="Link to this heading">¶</a></h1>
+<section id="part-1-report-corner-dfs">
+<h2>Part 1 - report corner DFs<a class="headerlink" href="#part-1-report-corner-dfs" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resFile_455</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_455_2g_900K_res.m&quot;</span>
+<span class="n">resFile_260</span> <span class="o">=</span> <span class="s2">&quot;./serpent/Fuel_only/Fuel_260_2g_res.m&quot;</span>
+<span class="n">xs_455</span><span class="p">,</span> <span class="n">bc_455</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="o">=</span><span class="n">resFile_455</span><span class="p">,</span> <span class="n">univ</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">xs_260</span><span class="p">,</span> <span class="n">bc_260</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="o">=</span><span class="n">resFile_260</span><span class="p">,</span> <span class="n">univ</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">timeDays</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bc_455</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">]),</span>
+ <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.37961e+14</span><span class="p">,</span> <span class="mf">3.19833e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;wJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;sJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;eJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;nJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;wFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.41842e+14</span><span class="p">,</span> <span class="mf">3.37817e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;sFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.41769e+14</span><span class="p">,</span> <span class="mf">3.37144e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;eFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.41827e+14</span><span class="p">,</span> <span class="mf">3.37649e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;nFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.41898e+14</span><span class="p">,</span> <span class="mf">3.37753e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;wDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.01631</span><span class="p">,</span> <span class="mf">1.05623</span><span class="p">]),</span>
+ <span class="s1">&#39;sDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.016</span>  <span class="p">,</span> <span class="mf">1.05413</span><span class="p">]),</span>
+ <span class="s1">&#39;eDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.01624</span><span class="p">,</span> <span class="mf">1.0557</span> <span class="p">]),</span>
+ <span class="s1">&#39;nDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.01654</span><span class="p">,</span> <span class="mf">1.05603</span><span class="p">]),</span>
+ <span class="s1">&#39;nwDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.02128</span><span class="p">,</span> <span class="mf">1.02203</span><span class="p">]),</span>
+ <span class="s1">&#39;neDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.02252</span><span class="p">,</span> <span class="mf">1.02245</span><span class="p">]),</span>
+ <span class="s1">&#39;seDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.02076</span><span class="p">,</span> <span class="mf">1.02134</span><span class="p">]),</span>
+ <span class="s1">&#39;swDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.02235</span><span class="p">,</span> <span class="mf">1.02145</span><span class="p">])}</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bc_260</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span><span class="p">]),</span>
+ <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.38455e+14</span><span class="p">,</span> <span class="mf">5.33629e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;wJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;sJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;eJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;nJnet&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.</span><span class="p">]),</span>
+ <span class="s1">&#39;wFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.38525e+14</span><span class="p">,</span> <span class="mf">5.17849e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;sFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.38585e+14</span><span class="p">,</span> <span class="mf">5.18003e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;eFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.38474e+14</span><span class="p">,</span> <span class="mf">5.17765e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;nFlux&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.38465e+14</span><span class="p">,</span> <span class="mf">5.17969e+13</span><span class="p">]),</span>
+ <span class="s1">&#39;wDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00029</span> <span class="p">,</span> <span class="mf">0.970428</span><span class="p">]),</span>
+ <span class="s1">&#39;sDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00054</span> <span class="p">,</span> <span class="mf">0.970716</span><span class="p">]),</span>
+ <span class="s1">&#39;eDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00008</span> <span class="p">,</span> <span class="mf">0.970271</span><span class="p">]),</span>
+ <span class="s1">&#39;nDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00004</span> <span class="p">,</span> <span class="mf">0.970653</span><span class="p">]),</span>
+ <span class="s1">&#39;nwDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00286</span> <span class="p">,</span> <span class="mf">0.940338</span><span class="p">]),</span>
+ <span class="s1">&#39;neDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00338</span> <span class="p">,</span> <span class="mf">0.939482</span><span class="p">]),</span>
+ <span class="s1">&#39;seDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00237</span> <span class="p">,</span> <span class="mf">0.939798</span><span class="p">]),</span>
+ <span class="s1">&#39;swDF&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.00288</span> <span class="p">,</span> <span class="mf">0.937232</span><span class="p">])}</span>
+</pre></div>
+</div>
+</section>
+<section id="part-2-get-form-factors">
+<h2>Part 2 - get form factors<a class="headerlink" href="#part-2-get-form-factors" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get serpent power density</span>
+<span class="n">npins</span> <span class="o">=</span> <span class="mi">17</span>
+<span class="n">vol_pin</span> <span class="o">=</span> <span class="mf">21.42</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">npins</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">detFile_455</span> <span class="o">=</span> <span class="s1">&#39;./serpent/Fuel_only/Fuel_455_2g_900K_det0.m&#39;</span>
+<span class="n">det_455</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">detFile_455</span><span class="p">)</span>
+<span class="n">fastPower_455</span> <span class="o">=</span> <span class="n">det_455</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalPower_455</span> <span class="o">=</span> <span class="n">det_455</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">serpentPower_455</span> <span class="o">=</span> <span class="n">fastPower_455</span> <span class="o">+</span> <span class="n">thermalPower_455</span>
+<span class="n">xs_455</span> <span class="o">=</span> <span class="n">AFEN</span><span class="o">.</span><span class="n">getFormFactors</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="n">xs_455</span><span class="p">,</span> <span class="n">power_fast</span><span class="o">=</span><span class="n">fastPower_455</span><span class="p">,</span> <span class="n">power_thermal</span><span class="o">=</span><span class="n">thermalPower_455</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="n">vol_pin</span><span class="p">)</span>
+
+<span class="n">detFile_260</span> <span class="o">=</span> <span class="s1">&#39;./serpent/Fuel_only/Fuel_260_2g_det0.m&#39;</span>
+<span class="n">det_260</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">detFile_260</span><span class="p">)</span>
+<span class="n">fastPower_260</span> <span class="o">=</span> <span class="n">det_260</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalPower_260</span> <span class="o">=</span> <span class="n">det_260</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">serpentPower_260</span> <span class="o">=</span> <span class="n">fastPower_260</span> <span class="o">+</span> <span class="n">thermalPower_260</span>
+<span class="n">xs_260</span> <span class="o">=</span> <span class="n">AFEN</span><span class="o">.</span><span class="n">getFormFactors</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="n">xs_260</span><span class="p">,</span> <span class="n">power_fast</span><span class="o">=</span><span class="n">fastPower_260</span><span class="p">,</span> <span class="n">power_thermal</span><span class="o">=</span><span class="n">thermalPower_260</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="n">vol_pin</span><span class="p">)</span>
+
+<span class="c1"># fig, axs = plt.subplots(2,2)</span>
+
+<span class="c1"># form factors for 4.55% assembly</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">res2d</span><span class="o">=</span><span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">npins</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;FF&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;X (cm)&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Y (cm)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">res2d</span><span class="o">=</span><span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">npins</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;FF&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;X (cm)&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Y (cm)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+
+<span class="c1"># form factors for 2.60% assembly</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">res2d</span><span class="o">=</span><span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">npins</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;FF&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;X (cm)&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Y (cm)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">res2d</span><span class="o">=</span><span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">npins</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;FF&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;X (cm)&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Y (cm)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kappaSigmaF</span><span class="o">*</span><span class="n">Flx</span><span class="o">*</span><span class="n">Vol</span> <span class="p">(</span><span class="n">homogenous</span><span class="p">)</span> <span class="o">=</span> <span class="mf">45881.84688206413</span>
+<span class="n">kappaSigmaF</span><span class="o">*</span><span class="n">Flx</span><span class="o">*</span><span class="n">Vol</span> <span class="p">(</span><span class="n">heterogenous</span><span class="p">)</span> <span class="o">=</span> <span class="mf">45881.640158760005</span>
+<span class="n">kappaSigmaF</span><span class="o">*</span><span class="n">Flx</span><span class="o">*</span><span class="n">Vol</span> <span class="p">(</span><span class="n">homogenous</span><span class="p">)</span> <span class="o">=</span> <span class="mf">45881.79101492478</span>
+<span class="n">kappaSigmaF</span><span class="o">*</span><span class="n">Flx</span><span class="o">*</span><span class="n">Vol</span> <span class="p">(</span><span class="n">heterogenous</span><span class="p">)</span> <span class="o">=</span> <span class="mf">45881.64174636001</span>
+</pre></div>
+</div>
+<img alt="../../_images/final_project_12_1.png" src="../../_images/final_project_12_1.png" />
+<img alt="../../_images/final_project_12_2.png" src="../../_images/final_project_12_2.png" />
+<img alt="../../_images/final_project_12_3.png" src="../../_images/final_project_12_3.png" />
+<img alt="../../_images/final_project_12_4.png" src="../../_images/final_project_12_4.png" />
+</section>
+<section id="part-3-use-the-nem-solver-to-get-the-surface-homogenous-fluxes">
+<h2>Part 3 - Use the NEM solver to get the surface homogenous fluxes<a class="headerlink" href="#part-3-use-the-nem-solver-to-get-the-surface-homogenous-fluxes" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now set the entire problem up. Solve NEM in x and y directions</span>
+<span class="n">resFile</span> <span class="o">=</span> <span class="s1">&#39;./serpent/SMR/SMR_Ref_2D_2g_res.m&#39;</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">bc_f12</span> <span class="o">=</span>  <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="p">,</span> <span class="s1">&#39;F12&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">xs_ref</span><span class="p">,</span> <span class="n">bc_ref</span> <span class="o">=</span>  <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="p">,</span> <span class="s1">&#39;Ref&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">bc_f2</span> <span class="o">=</span>  <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="p">,</span> <span class="s1">&#39;F2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">bc_f11</span> <span class="o">=</span>  <span class="n">NEM</span><span class="o">.</span><span class="n">GetSerpentRes</span><span class="p">(</span><span class="n">resFile</span><span class="p">,</span> <span class="s1">&#39;F11&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">#########################################</span>
+<span class="c1"># Setup transverse leakages for each node</span>
+<span class="c1">#########################################</span>
+<span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="mf">21.42</span><span class="p">,</span> <span class="mf">21.42</span>  <span class="c1"># cm  - assembly length</span>
+
+<span class="c1"># F12</span>
+<span class="n">trLeakage_f12</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;eL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;eD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_ref</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span> <span class="c1"># use normal diff here.</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;edx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;wL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span> <span class="c1"># use values from the node itself (since it is reflective ...)</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;wD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;wdx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;nD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;sD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f12</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="c1"># F2</span>
+<span class="n">trLeakage_f2</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;eL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;eD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;edx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;wL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span> <span class="c1"># use values from the node itself (since it is reflective ...)</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;wD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;wdx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;nD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;sD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f2</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="c1"># Ref</span>
+<span class="n">trLeakage_ref</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;eL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;eD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_ref</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;edx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;wL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f12</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span> <span class="c1"># use values from the node itself (since it is reflective ...)</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;wD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;wdx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;nD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_ref</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;sD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_ref</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="c1"># F11</span>
+<span class="n">trLeakage_f11</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;eL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;eD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;edx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;wL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;nJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f2</span><span class="p">[</span><span class="s1">&#39;sJnet&#39;</span><span class="p">]</span> <span class="c1"># use values from the node itself (since it is reflective ...)</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;wD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;wdx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;nL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_ref</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;nD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_ref</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;ndy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;sL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;eJnet&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bc_f11</span><span class="p">[</span><span class="s1">&#39;wJnet&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;sD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;cmmdiff&#39;</span><span class="p">]</span>
+<span class="n">trLeakage_f11</span><span class="p">[</span><span class="s1">&#39;sdy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+
+
+<span class="c1"># Setup bcs for next step (get from NEM output)</span>
+<span class="n">nem_flux</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F12&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F11&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># Solve for each in dx direction</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">nem_f12</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_260</span><span class="p">,</span> <span class="n">bc_f12</span><span class="p">,</span> <span class="n">trLeakage_f12</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">nem_f12</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f12</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_f2</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_455</span><span class="p">,</span> <span class="n">bc_f2</span><span class="p">,</span> <span class="n">trLeakage_f2</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">nem_f2</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f2</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_ref</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_ref</span><span class="p">,</span> <span class="n">bc_ref</span><span class="p">,</span> <span class="n">trLeakage_ref</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">nem_ref</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_ref</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_f11</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_260</span><span class="p">,</span> <span class="n">bc_f11</span><span class="p">,</span> <span class="n">trLeakage_f11</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">nem_f11</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f11</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F12&#39;</span><span class="p">][</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f12</span><span class="o">.</span><span class="n">westHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">][</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f2</span><span class="o">.</span><span class="n">westHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">][</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_ref</span><span class="o">.</span><span class="n">westHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F11&#39;</span><span class="p">][</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f11</span><span class="o">.</span><span class="n">westHomFlux</span>
+
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F12&#39;</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f12</span><span class="o">.</span><span class="n">eastHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f2</span><span class="o">.</span><span class="n">eastHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_ref</span><span class="o">.</span><span class="n">eastHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F11&#39;</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f11</span><span class="o">.</span><span class="n">eastHomFlux</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NEM x direction is done, time is&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">-</span><span class="n">start_time</span><span class="p">)</span>
+
+<span class="c1"># Solve for y</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">nem_f12</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_260</span><span class="p">,</span> <span class="n">bc_f12</span><span class="p">,</span> <span class="n">trLeakage_f12</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">nem_f12</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f12</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_f2</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_455</span><span class="p">,</span> <span class="n">bc_f2</span><span class="p">,</span> <span class="n">trLeakage_f2</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">nem_f2</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f2</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_ref</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_ref</span><span class="p">,</span> <span class="n">bc_ref</span><span class="p">,</span> <span class="n">trLeakage_ref</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">nem_ref</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_ref</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+
+<span class="n">nem_f11</span> <span class="o">=</span> <span class="n">NEM</span><span class="o">.</span><span class="n">CartesianNem1D</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">xs_260</span><span class="p">,</span> <span class="n">bc_f11</span><span class="p">,</span> <span class="n">trLeakage_f11</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">nem_f11</span><span class="o">.</span><span class="n">TransverseLeakageCoef</span><span class="p">()</span>  <span class="c1"># obtain the coefficients of the TL</span>
+<span class="n">nem_f11</span><span class="o">.</span><span class="n">GetExpansionCoeffs</span><span class="p">()</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NEM y direction is done, time is&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">-</span><span class="n">start_time</span><span class="p">)</span>
+
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F12&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f12</span><span class="o">.</span><span class="n">northHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f2</span><span class="o">.</span><span class="n">northHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_ref</span><span class="o">.</span><span class="n">northHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F11&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f11</span><span class="o">.</span><span class="n">northHomFlux</span>
+
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F12&#39;</span><span class="p">][</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f12</span><span class="o">.</span><span class="n">southHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">][</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f2</span><span class="o">.</span><span class="n">southHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">][</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_ref</span><span class="o">.</span><span class="n">southHomFlux</span>
+<span class="n">nem_flux</span><span class="p">[</span><span class="s1">&#39;F11&#39;</span><span class="p">][</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nem_f11</span><span class="o">.</span><span class="n">southHomFlux</span>
+
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">nem_flux</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+  <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="n">nem_flux</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">nem_flux</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key2</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NEM</span> <span class="n">x</span> <span class="n">direction</span> <span class="ow">is</span> <span class="n">done</span><span class="p">,</span> <span class="n">time</span> <span class="ow">is</span> <span class="mf">0.14284634590148926</span>
+<span class="n">NEM</span> <span class="n">y</span> <span class="n">direction</span> <span class="ow">is</span> <span class="n">done</span><span class="p">,</span> <span class="n">time</span> <span class="ow">is</span> <span class="mf">0.03863716125488281</span>
+<span class="n">F12</span> <span class="o">|</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.52434290e+14</span> <span class="mf">5.69928506e+13</span><span class="p">]</span>
+<span class="n">F12</span> <span class="o">|</span> <span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.80608491e+14</span> <span class="mf">2.10505844e+13</span><span class="p">]</span>
+<span class="n">F12</span> <span class="o">|</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.15397734e+14</span> <span class="mf">4.72887709e+13</span><span class="p">]</span>
+<span class="n">F12</span> <span class="o">|</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.53214832e+14</span> <span class="mf">4.52170421e+13</span><span class="p">]</span>
+<span class="n">F2</span> <span class="o">|</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.87056623e+14</span> <span class="mf">3.80176960e+13</span><span class="p">]</span>
+<span class="n">F2</span> <span class="o">|</span> <span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.48830002e+14</span> <span class="mf">4.19079191e+13</span><span class="p">]</span>
+<span class="n">F2</span> <span class="o">|</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.48827575e+14</span> <span class="mf">4.19075340e+13</span><span class="p">]</span>
+<span class="n">F2</span> <span class="o">|</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.87058751e+14</span> <span class="mf">3.80180183e+13</span><span class="p">]</span>
+<span class="n">ref</span> <span class="o">|</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.87221735e+14</span> <span class="mf">2.51751224e+13</span><span class="p">]</span>
+<span class="n">ref</span> <span class="o">|</span> <span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.17016584e+14</span> <span class="mf">1.31356617e+12</span><span class="p">]</span>
+<span class="n">ref</span> <span class="o">|</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.17017310e+14</span> <span class="mf">1.31379707e+12</span><span class="p">]</span>
+<span class="n">ref</span> <span class="o">|</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.87220887e+14</span> <span class="mf">2.51747557e+13</span><span class="p">]</span>
+<span class="n">F11</span> <span class="o">|</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.53189608e+14</span> <span class="mf">4.51887577e+13</span><span class="p">]</span>
+<span class="n">F11</span> <span class="o">|</span> <span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.15413081e+14</span> <span class="mf">4.72931002e+13</span><span class="p">]</span>
+<span class="n">F11</span> <span class="o">|</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.80645325e+14</span> <span class="mf">2.10596265e+13</span><span class="p">]</span>
+<span class="n">F11</span> <span class="o">|</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.52414891e+14</span> <span class="mf">5.69849894e+13</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="part-4-use-het-fluxes-from-the-reference-colorset-calc-corner-dfs-to-obtain-homogenous-corner-fluxes">
+<h2>Part 4 - Use het. fluxes from the reference colorset calc + corner DF’s to obtain homogenous corner fluxes<a class="headerlink" href="#part-4-use-het-fluxes-from-the-reference-colorset-calc-corner-dfs-to-obtain-homogenous-corner-fluxes" title="Link to this heading">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DF&#39;s stored in bc_455 (F2) and bc_260 (F12)</span>
+<span class="c1"># corner fluxes stored in bc_fNNN (bc_f11,f12,f2,ref)</span>
+<span class="c1"># do 1/N * sum(flx_het_k</span>
+
+<span class="c1"># assemble serpent fluxes</span>
+
+
+
+<span class="c1"># corner point fluxes</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getCornerFlux</span><span class="p">(</span><span class="n">asm</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Solves equation 13.2 for each corner.</span>
+<span class="sd">  asm = Serpent heterogenous fluxes</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">flux_c</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="c1"># Equation 13.2</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">asm</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;nFlux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;wFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">asm</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;nFlux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;eFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">asm</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;sFlux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;eFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">asm</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;sFlux&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;wFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;wFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;eFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;sFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;nFlux&#39;</span><span class="p">]</span>
+  <span class="n">flux_c</span><span class="p">[</span><span class="s1">&#39;av&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span>
+
+  <span class="k">return</span> <span class="n">flux_c</span>
+
+<span class="c1"># Using Equation 13.2</span>
+<span class="n">flux_c_f12</span> <span class="o">=</span> <span class="n">getCornerFlux</span><span class="p">(</span><span class="n">asm</span><span class="o">=</span><span class="n">bc_f12</span><span class="p">)</span>
+<span class="n">flux_c_ref</span> <span class="o">=</span> <span class="n">getCornerFlux</span><span class="p">(</span><span class="n">asm</span><span class="o">=</span><span class="n">bc_ref</span><span class="p">)</span>
+<span class="n">flux_c_f2</span> <span class="o">=</span> <span class="n">getCornerFlux</span><span class="p">(</span><span class="n">asm</span><span class="o">=</span><span class="n">bc_f2</span><span class="p">)</span>
+<span class="n">flux_c_f11</span> <span class="o">=</span> <span class="n">getCornerFlux</span><span class="p">(</span><span class="n">asm</span><span class="o">=</span><span class="n">bc_f11</span><span class="p">)</span>
+
+<span class="c1"># Using Equation 13.3</span>
+<span class="n">flux_bar_c_f12</span> <span class="o">=</span> <span class="n">flux_c_f12</span>
+<span class="n">flux_bar_c_f12</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f12</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f12</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;neDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f12</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">]</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">]</span>
+
+<span class="n">flux_bar_c_f2</span> <span class="o">=</span> <span class="n">flux_c_f2</span>
+<span class="n">flux_bar_c_f2</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f2</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;neDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;neDF&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f2</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f2</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span>
+
+<span class="n">flux_bar_c_f11</span> <span class="o">=</span> <span class="n">flux_c_f11</span>
+<span class="n">flux_bar_c_f11</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;neDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f12</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;nwDF&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f11</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f11</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span>
+<span class="n">flux_bar_c_f11</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_c_f11</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flux_c_f2</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">bc_455</span><span class="p">[</span><span class="s1">&#39;seDF&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">bc_260</span><span class="p">[</span><span class="s1">&#39;swDF&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">flx</span> <span class="o">=</span> <span class="n">flux_bar_c_f12</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;01: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;nw&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;11: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;ne&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;10: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;se&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;00: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;sw&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;y1: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x1: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;y0: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x0: &quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;phi_bar&quot;</span><span class="p">,</span> <span class="n">flx</span><span class="p">[</span><span class="s1">&#39;av&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">01</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.42907e+14</span> <span class="mf">5.04895e+13</span><span class="p">]</span>
+<span class="mi">11</span><span class="p">:</span>  <span class="p">[</span><span class="mf">1.71540e+14</span> <span class="mf">1.93302e+13</span><span class="p">]</span>
+<span class="mi">10</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.17414547e+14</span> <span class="mf">2.88977023e+13</span><span class="p">]</span>
+<span class="mi">00</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.77655747e+14</span> <span class="mf">4.93364437e+13</span><span class="p">]</span>
+<span class="n">y1</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.16384e+14</span> <span class="mf">4.59049e+13</span><span class="p">]</span>
+<span class="n">x1</span><span class="p">:</span>  <span class="p">[</span><span class="mf">1.83113e+14</span> <span class="mf">2.21544e+13</span><span class="p">]</span>
+<span class="n">y0</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.52849e+14</span> <span class="mf">4.32762e+13</span><span class="p">]</span>
+<span class="n">x0</span><span class="p">:</span>  <span class="p">[</span><span class="mf">2.54480e+14</span> <span class="mf">5.33137e+13</span><span class="p">]</span>
+<span class="n">phi_bar</span> <span class="p">[</span><span class="mf">2.27957e+14</span> <span class="mf">4.87291e+13</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="question-4">
+<h1>Question 4<a class="headerlink" href="#question-4" title="Link to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># First get serpent power</span>
+<span class="n">detFile</span> <span class="o">=</span> <span class="s1">&#39;./serpent/SMR/SMR_Ref_2D_2g_det0.m&#39;</span>
+<span class="n">det</span> <span class="o">=</span> <span class="n">serpentTools</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">detFile</span><span class="p">)</span>
+
+<span class="n">fastHetFlux_f2</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalHetFlux_f2</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">fastPower_f2</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalPower_f2</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">serpentPower_f2</span> <span class="o">=</span> <span class="n">fastPower_f2</span> <span class="o">+</span> <span class="n">thermalPower_f2</span>
+
+<span class="n">fastHetFlux_f11</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">thermalHetFlux_f11</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">fastPower_f11</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">thermalPower_f11</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">serpentPower_f11</span> <span class="o">=</span> <span class="n">fastPower_f11</span> <span class="o">+</span> <span class="n">thermalPower_f11</span>
+
+<span class="n">fastHetFlux_f12</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalHetFlux_f12</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">fastPower_f12</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">thermalPower_f12</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npins</span><span class="p">]</span>
+<span class="n">serpentPower_f12</span> <span class="o">=</span> <span class="n">fastPower_f12</span> <span class="o">+</span> <span class="n">thermalPower_f12</span>
+
+<span class="n">fastHetFlux_ref</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">thermalHetFlux_ref</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;flux_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">fastPower_ref</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_fast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="n">npins</span><span class="p">:]</span>
+<span class="n">thermalPower_ref</span> <span class="o">=</span> <span class="n">det</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;power_thermal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tallies</span><span class="p">[</span><span class="n">npins</span><span class="p">:,</span> <span class="n">npins</span><span class="p">:]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now solving AFEM</span>
+<span class="n">yvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">dx</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">+</span><span class="n">dx</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">npins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">yvals</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">yvals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">+</span><span class="n">yvals</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">afen_f2</span> <span class="o">=</span> <span class="n">AFEN</span><span class="o">.</span><span class="n">AFEN2D</span><span class="p">(</span><span class="n">xs_455</span><span class="p">,</span> <span class="n">flux_bar_c_f2</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">symbolic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">afen_f2</span><span class="o">.</span><span class="n">ReconstructFlux</span><span class="p">()</span>  <span class="c1"># a built-in method to obtain the coeffs</span>
+<span class="n">afen_f2</span><span class="o">.</span><span class="n">GetFlux2D</span><span class="p">(</span><span class="n">yvals</span><span class="p">,</span> <span class="n">yvals</span><span class="p">)</span>
+<span class="n">power_f2</span> <span class="o">=</span> <span class="n">afen_f2</span><span class="o">.</span><span class="n">PinPower</span><span class="p">(</span><span class="n">ff</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs_455</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]))</span>
+
+<span class="n">afen_f12</span> <span class="o">=</span> <span class="n">AFEN</span><span class="o">.</span><span class="n">AFEN2D</span><span class="p">(</span><span class="n">xs_260</span><span class="p">,</span> <span class="n">flux_bar_c_f12</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">symbolic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">afen_f12</span><span class="o">.</span><span class="n">ReconstructFlux</span><span class="p">()</span>  <span class="c1"># a built-in method to obtain the coeffs</span>
+<span class="n">afen_f12</span><span class="o">.</span><span class="n">GetFlux2D</span><span class="p">(</span><span class="n">yvals</span><span class="p">,</span> <span class="n">yvals</span><span class="p">)</span>
+<span class="n">power_f12</span> <span class="o">=</span> <span class="n">afen_f12</span><span class="o">.</span><span class="n">PinPower</span><span class="p">(</span><span class="n">ff</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]))</span>
+
+<span class="n">afen_f11</span> <span class="o">=</span> <span class="n">AFEN</span><span class="o">.</span><span class="n">AFEN2D</span><span class="p">(</span><span class="n">xs_260</span><span class="p">,</span> <span class="n">flux_bar_c_f11</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">symbolic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">afen_f11</span><span class="o">.</span><span class="n">ReconstructFlux</span><span class="p">()</span>  <span class="c1"># a built-in method to obtain the coeffs</span>
+<span class="n">afen_f11</span><span class="o">.</span><span class="n">GetFlux2D</span><span class="p">(</span><span class="n">yvals</span><span class="p">,</span> <span class="n">yvals</span><span class="p">)</span>
+<span class="n">power_f11</span> <span class="o">=</span> <span class="n">afen_f11</span><span class="o">.</span><span class="n">PinPower</span><span class="p">(</span><span class="n">ff</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">xs_260</span><span class="p">[</span><span class="s1">&#39;ff&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]))</span>
+
+
+<span class="c1"># ERROR</span>
+<span class="n">error_f12</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f12</span><span class="o">-</span><span class="n">power_f12</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f12</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">error_f2</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f2</span><span class="o">-</span><span class="n">power_f2</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f2</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">error_f11</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f11</span><span class="o">-</span><span class="n">power_f11</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f11</span><span class="o">*</span><span class="mi">100</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">error_f12</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">error_f2</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">error_f11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;Percent Diff. Power&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
+<span class="c1"># AFEN</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">power_f12</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">power_f2</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">power_f11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;Power (AFEN)&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
+<span class="c1"># REFERENCE</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">serpentPower_f12</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">serpentPower_f2</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">do_cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">AFEN</span><span class="o">.</span><span class="n">meshPlot</span><span class="p">(</span><span class="n">serpentPower_f11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">cbar_limits</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span> <span class="n">cbar_label</span><span class="o">=</span><span class="s1">&#39;Power (Serpent)&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_409546</span><span class="o">/</span><span class="mf">2576880132.</span><span class="n">py</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span> <span class="ne">RuntimeWarning</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">value</span> <span class="n">encountered</span> <span class="ow">in</span> <span class="n">divide</span>
+  <span class="n">error_f12</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f12</span><span class="o">-</span><span class="n">power_f12</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f12</span><span class="o">*</span><span class="mi">100</span>
+<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_409546</span><span class="o">/</span><span class="mf">2576880132.</span><span class="n">py</span><span class="p">:</span><span class="mi">23</span><span class="p">:</span> <span class="ne">RuntimeWarning</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">value</span> <span class="n">encountered</span> <span class="ow">in</span> <span class="n">divide</span>
+  <span class="n">error_f2</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f2</span><span class="o">-</span><span class="n">power_f2</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f2</span><span class="o">*</span><span class="mi">100</span>
+<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_409546</span><span class="o">/</span><span class="mf">2576880132.</span><span class="n">py</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span> <span class="ne">RuntimeWarning</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">value</span> <span class="n">encountered</span> <span class="ow">in</span> <span class="n">divide</span>
+  <span class="n">error_f11</span> <span class="o">=</span> <span class="p">(</span><span class="n">serpentPower_f11</span><span class="o">-</span><span class="n">power_f11</span><span class="p">)</span><span class="o">/</span><span class="n">serpentPower_f11</span><span class="o">*</span><span class="mi">100</span>
+</pre></div>
+</div>
+<img alt="../../_images/final_project_20_1.png" src="../../_images/final_project_20_1.png" />
+<img alt="../../_images/final_project_20_2.png" src="../../_images/final_project_20_2.png" />
+<img alt="../../_images/final_project_20_3.png" src="../../_images/final_project_20_3.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_mean_abs</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+  <span class="n">summed</span> <span class="o">=</span> <span class="mf">0.0</span>
+  <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  <span class="n">this_max</span> <span class="o">=</span> <span class="mf">0.0</span>
+  <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
+        <span class="k">pass</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">summed</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">this_max</span><span class="p">:</span>
+          <span class="n">this_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">summed</span><span class="o">/</span><span class="n">count</span><span class="p">,</span> <span class="n">this_max</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean abs f12&quot;</span><span class="p">,</span> <span class="n">get_mean_abs</span><span class="p">(</span><span class="n">error_f12</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean abs f11&quot;</span><span class="p">,</span> <span class="n">get_mean_abs</span><span class="p">(</span><span class="n">error_f11</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean abs f2&quot;</span><span class="p">,</span> <span class="n">get_mean_abs</span><span class="p">(</span><span class="n">error_f2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mean</span> <span class="nb">abs</span> <span class="n">f12</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">1.8525427853684189</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">7.740551568722151</span><span class="p">))</span>
+<span class="n">mean</span> <span class="nb">abs</span> <span class="n">f11</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">1.7959443257000267</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">5.945815885279578</span><span class="p">))</span>
+<span class="n">mean</span> <span class="nb">abs</span> <span class="n">f2</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">1.975275112565977</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">8.601424492093734</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NRE7203</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Projects</a><ul>
+      <li>Previous: <a href="project5_notebook.html" title="previous chapter">NRE7203: Advanced Reactor Physics</a></li>
+      <li>Next: <a href="../../glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;July, 2025 Jonathon Faulkner.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/projects/__notebooks__/final_project.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

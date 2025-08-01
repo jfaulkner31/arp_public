@@ -35,6 +35,9 @@ Projects
    * :ref:`Results and Documentation Report <proj5>`
    * :ref:`Project 5 Notebook <project5_notebook>`
    * Analytic Flux Nodal Expansion Module :class:`analytic_nodal_expansion`
+* Project 6: Two-Step Approach
+   * :ref:`Results and Documentation Report <proj6>`
+   * :ref:`Project 6 Notebook <project6_notebook>`
 
 
 .. toctree::
@@ -48,6 +51,7 @@ Projects
    project3.rst
    project4.rst
    project5.rst
+   project6.rst
 
    __python_docs__/pointsource_sphere
    __python_docs__/transportcorrection
@@ -63,6 +67,7 @@ Projects
    __notebooks__/project3.rst
    __notebooks__/project4_notebook.rst
    __notebooks__/project5_notebook.rst
+   __notebooks__/final_project.rst
 
 
 .. image:: ../fancy_images/buzz_scary.png

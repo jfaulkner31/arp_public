@@ -1,5 +1,5 @@
 analytic\_nodal\_expansion module
-==========================
+=================================
 
 .. automodule:: analytic_nodal_expansion
    :members:
